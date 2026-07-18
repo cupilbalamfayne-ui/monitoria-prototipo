@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoria | Perfil del paciente</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="brand-mark">✚</span><span>MONITORIA<small>Monitoreo dinámico inteligente</small></span></div><div class="profile-mini">Paciente <strong id="topName">María Jiménez</strong></div></header>
+  <main>
+    <div class="page-title"><span>♟</span><h1>Perfil del Paciente</h1><p>Información segura para atención y seguimiento.</p></div>
+    <section class="layout">
+      <aside class="card patient-card">
+        <div class="avatar">👤</div>
+        <h2 id="cardName">María Jiménez</h2><p>Paciente principal</p>
+        <div class="qr-section"><h3>QR de Emergencia</h3><div id="qrcode" aria-label="Código QR de emergencia"></div><p class="small">Escanéalo para consultar la ficha médica.</p><button id="downloadQR" class="secondary">Descargar QR</button></div>
+      </aside>
+      <form class="card form-card" id="patientForm">
+        <div class="tabs"><button type="button" class="active">▣ Datos generales</button><button type="button" class="muted">▰ Archivos</button></div>
+        <h2>Información básica</h2>
+        <div class="fields triple">
+          <label>Nombre completo<input name="name" value="María Jiménez" required></label>
+          <label>Edad<input name="age" type="number" value="68" min="0" max="130"></label>
+          <label>Fecha de nacimiento<input name="birth" type="date" value="1958-05-14"></label>
+          <label>Género<select name="gender"><option>Femenino</option><option>Masculino</option><option>Otro</option><option>Prefiero no decirlo</option></select></label>
+          <label>Seguro social<input name="insurance" value="IMSS-123456789"></label>
+          <label>Contacto de emergencia<input name="emergency" value="Ana Jiménez · +52 55 1234 5678"></label>
+        </div>
+        <h2>Información médica</h2>
+        <div class="fields double">
+          <label>Tipo de sangre<select name="blood"><option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option></select></label>
+          <label>Alergias<input name="allergies" value="Penicilina, nueces"></label>
+        </div>
+        <div class="fields"><label>Condición médica<textarea name="conditions">Hipertensión arterial, Diabetes tipo 2</textarea></label><label>Medicamentos actuales<textarea name="medications">Metformina 500 mg, Losartán 50 mg</textarea></label><label>Dispositivos médicos<textarea name="devices" placeholder="Ej. marcapasos, audífono, prótesis"></textarea></label></div>
+        <div class="actions"><span id="savedMessage" role="status">El QR se actualiza automáticamente.</span><button class="primary" type="submit">Guardar perfil</button></div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

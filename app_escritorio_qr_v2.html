@@ -1,0 +1,2834 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="MDI - Monitoreo Dinámico Inteligente | Panel de escritorio para cuidadores de adultos mayores">
+  <title>MDI - Monitoreo Dinámico Inteligente</title>
+  <style>
+    /* ================================================================
+       VARIABLES DE COLOR — Paleta extraída del diseño móvil original
+       ================================================================ */
+    :root {
+      --teal-darkest: #075E64;
+      /* Fondo del sidebar y elementos activos */
+      --teal-dark: #0D8A92;
+      /* Header, hover, bordes de énfasis      */
+      --teal: #19B5BE;
+      /* Color principal de la marca           */
+      --teal-medium: #3DC8D0;
+      /* Botones, tarjetas de acción           */
+      --teal-light: #6DD5DA;
+      /* Fondos de cards y paneles             */
+      --teal-lighter: #A3E5E8;
+      /* Filas de lista, items                 */
+      --teal-lightest: #D0F3F5;
+      /* Fondo general de la app               */
+      --teal-surface: #E8FAFB;
+      /* Fondo de campos de formulario         */
+      --white: #FFFFFF;
+      --text-dark: #0A3A3D;
+      /* Texto principal oscuro                */
+      --text-medium: #1A6A72;
+      /* Texto secundario                      */
+      --danger: #E53935;
+      /* Rojo para cerrar sesión               */
+      --sidebar-w: 230px;
+      /* Ancho del sidebar izquierdo           */
+      --header-h: 68px;
+      /* Alto del header superior              */
+      --radius: 12px;
+      /* Radio de esquinas estándar            */
+      --radius-sm: 8px;
+      /* Radio pequeño                         */
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    /* ================================================================
+       RESET Y BASE
+       ================================================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+      background: var(--teal-lightest);
+      color: var(--text-dark);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* ================================================================
+       PANTALLA DE LOGIN / INICIO
+       ================================================================ */
+    #screen-login {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(150deg, var(--teal-darkest) 0%, var(--teal) 55%, var(--teal-light) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+    }
+
+    .login-brand {
+      text-align: center;
+    }
+
+    .login-brand .brand-icon {
+      font-size: 80px;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+      margin-bottom: 16px;
+    }
+
+    .login-brand h1 {
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--teal-lighter);
+      letter-spacing: 6px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-brand p {
+      color: var(--teal-lighter);
+      font-size: 0.95rem;
+      letter-spacing: 4px;
+      margin-top: 6px;
+      opacity: 0.85;
+    }
+
+    .btn-iniciar {
+      background: var(--teal-medium);
+      color: var(--white);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      padding: 16px 72px;
+      border-radius: 50px;
+      font-size: 1.25rem;
+      font-weight: bold;
+      letter-spacing: 3px;
+      transition: all 0.25s;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-iniciar:hover {
+      background: var(--teal-light);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ================================================================
+       LAYOUT PRINCIPAL DE LA APP
+       ================================================================ */
+    #app {
+      display: none;
+      /* Se muestra al hacer login */
+      width: 100vw;
+      height: 100vh;
+      flex-direction: row;
+    }
+
+    #app.visible {
+      display: flex;
+    }
+
+    /* ================================================================
+       SIDEBAR IZQUIERDO
+       ================================================================ */
+    .sidebar {
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--teal-darkest);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
+      z-index: 10;
+    }
+
+    /* Logo en la parte superior del sidebar */
+    .sidebar-logo {
+      height: var(--header-h);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar-logo .logo-icon {
+      font-size: 1.8rem;
+    }
+
+    .sidebar-logo .logo-text h2 {
+      color: var(--teal-lighter);
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+    }
+
+    .sidebar-logo .logo-text small {
+      color: var(--teal-light);
+      font-size: 0.6rem;
+      letter-spacing: 1.5px;
+      display: block;
+      opacity: 0.8;
+    }
+
+    /* Lista de navegación */
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 0;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 13px 20px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      transition: all 0.15s;
+      border-left: 3px solid transparent;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--white);
+      border-left-color: var(--teal-light);
+    }
+
+    .nav-item.active {
+      background: var(--teal);
+      color: var(--white);
+      font-weight: bold;
+      border-left-color: var(--white);
+    }
+
+    .nav-item .nav-icon {
+      font-size: 1.2rem;
+      min-width: 24px;
+      text-align: center;
+    }
+
+    /* Sección inferior del sidebar (Ajustes) */
+    .sidebar-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 8px 0;
+    }
+
+    /* ================================================================
+       CONTENEDOR DERECHO (Header + Contenido)
+       ================================================================ */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    /* ================================================================
+       HEADER SUPERIOR
+       ================================================================ */
+    .top-header {
+      height: var(--header-h);
+      background: var(--teal);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      z-index: 5;
+    }
+
+    /* Info del paciente en el header */
+    .header-patient {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .patient-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--teal-darkest);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: var(--teal-lighter);
+      flex-shrink: 0;
+    }
+
+    .header-patient .patient-label {
+      color: var(--teal-lightest);
+      font-size: 0.75rem;
+      display: block;
+    }
+
+    .header-patient .patient-name {
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: bold;
+      display: block;
+    }
+
+    /* Botones del header (campana, engranaje) */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.2);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: var(--white);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .header-icon-btn:hover {
+      background: var(--teal-darkest);
+    }
+
+    /* ================================================================
+       ÁREA DE CONTENIDO PRINCIPAL
+       ================================================================ */
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px;
+      background: var(--teal-lightest);
+    }
+
+    /* Cada sección se muestra u oculta con JS */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    /* Título de sección */
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: var(--teal-darkest);
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--teal-light);
+    }
+
+    /* Botón de regreso */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      transition: background 0.15s;
+    }
+
+    .back-btn:hover {
+      background: var(--teal-dark);
+    }
+
+    /* ================================================================
+       COMPONENTES REUTILIZABLES
+       ================================================================ */
+
+    /* Tarjeta base */
+    .card {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Barra de búsqueda */
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--teal-lighter);
+      border-radius: 50px;
+      padding: 9px 16px;
+      margin-bottom: 16px;
+    }
+
+    .search-bar input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+
+    /* Ítem de carpeta */
+    .folder-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      padding: 13px 18px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .folder-item:hover {
+      background: var(--teal-light);
+      transform: translateX(4px);
+    }
+
+    /* Placeholder de "pendiente" */
+    .placeholder-bar {
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      height: 40px;
+      margin-bottom: 10px;
+      opacity: 0.55;
+    }
+
+    .pending-chip {
+      text-align: center;
+      padding: 12px;
+      background: var(--teal-medium);
+      border-radius: var(--radius-sm);
+      color: var(--white);
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    /* ================================================================
+       SECCIÓN: HOME (INICIO)
+       ================================================================ */
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 860px;
+    }
+
+    .action-card {
+      background: var(--teal-medium);
+      border-radius: var(--radius);
+      padding: 44px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
+      border: 2px solid transparent;
+    }
+
+    .action-card:hover {
+      background: var(--teal-dark);
+      transform: translateY(-5px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .action-card .action-icon {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .action-card h3 {
+      color: var(--white);
+      font-size: 1.3rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    /* ================================================================
+       SECCIÓN: EMERGENCIA
+       ================================================================ */
+    .emergency-header {
+      background: var(--teal-medium);
+      border-radius: var(--radius-sm);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      color: var(--white);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .emergency-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      padding: 14px 20px;
+      margin-bottom: 10px;
+      transition: background 0.15s;
+    }
+
+    .emergency-row:hover {
+      background: var(--teal-light);
+    }
+
+    .emergency-row .e-name {
+      font-weight: bold;
+      color: var(--teal-darkest);
+      font-size: 0.95rem;
+    }
+
+    .emergency-row .e-phone {
+      color: var(--teal-dark);
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    /* ================================================================
+       SECCIÓN: COMPLETADO
+       ================================================================ */
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      transition: background 0.15s;
+    }
+
+    .task-item:hover {
+      background: var(--teal-light);
+    }
+
+    .task-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--teal-dark);
+      cursor: pointer;
+    }
+
+    .task-item label {
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* ================================================================
+       SECCIÓN: MENSAJES / CHAT
+       ================================================================ */
+    .messages-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      height: 580px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    /* Panel izquierdo: lista de contactos */
+    .contacts-panel {
+      background: var(--teal);
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid var(--teal-dark);
+    }
+
+    .contacts-top-bar {
+      background: var(--teal-dark);
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .contacts-top-bar h3 {
+      color: var(--white);
+      font-size: 1rem;
+    }
+
+    /* Fila de avatares de acceso rápido */
+    .quick-avatars {
+      display: flex;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--teal-medium);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .avatar-sm {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--teal-darkest);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--teal-lighter);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .avatar-sm:hover {
+      border-color: var(--white);
+    }
+
+    /* Ítem de conversación */
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      transition: background 0.15s;
+    }
+
+    .contact-item:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .contact-item.selected {
+      background: var(--teal-dark);
+    }
+
+    .contact-item .c-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--teal-darkest);
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: bold;
+      color: var(--teal-lighter);
+      flex-shrink: 0;
+    }
+
+    .contact-item .c-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .contact-item .c-info strong {
+      color: var(--white);
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .contact-item .c-info span {
+      color: rgba(255, 255, 255, 0.65);
+      font-size: 0.8rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
+    }
+
+    .contact-item .c-time {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+
+    /* Panel derecho: ventana de chat */
+    .chat-panel {
+      background: var(--teal-lightest);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header-bar {
+      background: var(--teal-medium);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header-bar strong {
+      color: var(--white);
+      font-size: 1rem;
+    }
+
+    .chat-messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Burbujas de mensaje */
+    .bubble {
+      max-width: 58%;
+      padding: 10px 16px;
+      border-radius: 18px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .bubble-in {
+      background: var(--teal-light);
+      color: var(--text-dark);
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble-out {
+      background: var(--teal-dark);
+      color: var(--white);
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .bubble-tick {
+      font-size: 0.72rem;
+      opacity: 0.7;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    /* Barra de escritura del chat */
+    .chat-input-row {
+      padding: 14px 20px;
+      background: var(--teal-surface);
+      border-top: 1px solid var(--teal-lighter);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      padding: 10px 18px;
+      border-radius: 50px;
+      border: 1px solid var(--teal-light);
+      background: var(--white);
+      font-size: 0.9rem;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .chat-input-row input:focus {
+      border-color: var(--teal);
+    }
+
+    .send-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--teal-dark);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: var(--white);
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .send-btn:hover {
+      background: var(--teal-darkest);
+      transform: scale(1.1);
+    }
+
+    /* ================================================================
+       SECCIÓN: CALENDARIO
+       ================================================================ */
+    .calendar-layout {
+      display: grid;
+      grid-template-columns: 1fr 310px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .calendar-card {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    /* Cabecera del calendario (mes + flechas) */
+    .cal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .cal-top h3 {
+      font-size: 1.15rem;
+      color: var(--teal-darkest);
+      letter-spacing: 1px;
+    }
+
+    .cal-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--teal);
+      border: none;
+      color: var(--white);
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .cal-arrow:hover {
+      background: var(--teal-dark);
+    }
+
+    /* Cuadrícula de días */
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .cal-weekdays span {
+      font-size: 0.78rem;
+      font-weight: bold;
+      color: var(--teal-dark);
+      padding: 4px 0;
+    }
+
+    .cal-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+
+    .cal-day {
+      text-align: center;
+      padding: 9px 4px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.88rem;
+      transition: background 0.15s;
+      color: var(--text-dark);
+    }
+
+    .cal-day:hover:not(.empty) {
+      background: var(--teal-medium);
+      color: var(--white);
+    }
+
+    .cal-day.empty {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .cal-day.today {
+      background: var(--teal-dark);
+      color: var(--white);
+      font-weight: bold;
+    }
+
+    .cal-day.event {
+      background: var(--teal-medium);
+      color: var(--white);
+      font-weight: bold;
+      position: relative;
+    }
+
+    .cal-day.event::after {
+      content: '•';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+    }
+
+    /* Panel lateral: eventos pendientes */
+    .pending-panel {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .pending-panel h3 {
+      color: var(--teal-darkest);
+      margin-bottom: 16px;
+      font-size: 1rem;
+    }
+
+    .event-item {
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--teal-dark);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .event-item:hover {
+      background: var(--teal-medium);
+      color: var(--white);
+    }
+
+    .event-item .ev-date {
+      font-size: 0.78rem;
+      font-weight: bold;
+      color: var(--teal-darkest);
+      margin-bottom: 4px;
+    }
+
+    .event-item:hover .ev-date {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .event-item .ev-text {
+      font-size: 0.88rem;
+    }
+
+    /* ================================================================
+       SECCIÓN: PACIENTE
+       ================================================================ */
+    .paciente-header-card {
+      background: var(--teal);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .big-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--teal-dark);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--teal-lighter);
+      flex-shrink: 0;
+    }
+
+    .paciente-header-card .ph-label {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.78rem;
+      display: block;
+    }
+
+    .paciente-header-card .ph-name {
+      color: var(--white);
+      font-size: 1.3rem;
+      font-weight: bold;
+      display: block;
+    }
+
+    /* Tabs del paciente */
+    .tab-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .tab-btn {
+      padding: 10px 22px;
+      border-radius: var(--radius-sm);
+      border: 2px solid var(--teal-light);
+      background: transparent;
+      color: var(--teal-dark);
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      background: var(--teal);
+      color: var(--white);
+      border-color: var(--teal);
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .section-subheader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      color: var(--teal-darkest);
+      font-weight: bold;
+    }
+
+    /* ================================================================
+       SECCIÓN: NOTAS
+       ================================================================ */
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .notes-list-panel {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .new-note-btn {
+      background: var(--teal-medium);
+      color: var(--white);
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+
+    .new-note-btn:hover {
+      background: var(--teal-dark);
+    }
+
+    .note-item {
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      padding: 13px 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+
+    .note-item:hover {
+      background: var(--teal-medium);
+      color: var(--white);
+    }
+
+    .note-item .n-date {
+      font-size: 0.78rem;
+      font-weight: bold;
+      color: var(--teal-dark);
+      margin-bottom: 3px;
+    }
+
+    .note-item:hover .n-date {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .note-item .n-text {
+      font-size: 0.85rem;
+    }
+
+    .note-item .n-opts {
+      color: var(--teal-dark);
+      font-size: 1.1rem;
+    }
+
+    /* Editor de notas */
+    .note-editor-panel {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .note-date-header {
+      background: var(--teal-medium);
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
+    }
+
+    .note-date-header strong {
+      color: var(--white);
+      font-size: 0.95rem;
+    }
+
+    .note-title-input {
+      width: 100%;
+      background: var(--teal-medium);
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: bold;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .note-title-input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .note-body-area {
+      flex: 1;
+      background: var(--teal-lightest);
+      border: 1px solid var(--teal-light);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      resize: none;
+      outline: none;
+      min-height: 200px;
+      font-family: inherit;
+      color: var(--text-dark);
+      transition: border-color 0.15s;
+    }
+
+    .note-body-area:focus {
+      border-color: var(--teal);
+    }
+
+    /* ================================================================
+       SECCIÓN: ARCHIVOS
+       ================================================================ */
+    .archivos-tab-bar {
+      display: flex;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .archivos-tab-bar button {
+      flex: 1;
+      padding: 13px;
+      border: none;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: all 0.15s;
+    }
+
+    .archivos-tab-bar button.active,
+    .archivos-tab-bar button:hover {
+      background: var(--teal);
+      color: var(--white);
+    }
+
+    .folder-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--teal-lighter);
+      border-radius: var(--radius-sm);
+      padding: 13px 18px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .folder-row:hover {
+      background: var(--teal-light);
+    }
+
+    .folder-row .fr-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .folder-row .fr-opts {
+      color: var(--teal-dark);
+      font-size: 1.1rem;
+    }
+
+    /* ================================================================
+       SECCIÓN: AJUSTES
+       ================================================================ */
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Columna izquierda: menú de ajustes */
+    .settings-menu {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    /* Perfil del paciente dentro del menú de ajustes */
+    .settings-profile {
+      background: var(--teal);
+      padding: 22px 16px;
+      text-align: center;
+    }
+
+    .settings-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--teal-dark);
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.9rem;
+      color: var(--teal-lighter);
+      margin: 0 auto 10px;
+    }
+
+    .settings-profile .sp-label {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.75rem;
+      display: block;
+    }
+
+    .settings-profile .sp-name {
+      color: var(--white);
+      font-weight: bold;
+      font-size: 1rem;
+      display: block;
+    }
+
+    /* Ítems del menú de ajustes */
+    .settings-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: background 0.15s;
+      color: var(--text-dark);
+    }
+
+    .settings-item:hover {
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    .settings-item.active {
+      background: var(--teal);
+      color: var(--white);
+      font-weight: bold;
+    }
+
+    .settings-item.danger {
+      color: var(--danger);
+    }
+
+    .settings-item.danger.active {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .si-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    /* Columna derecha: panel de detalle del ajuste seleccionado */
+    .settings-detail {
+      background: var(--teal-light);
+      border-radius: var(--radius);
+      padding: 26px;
+      box-shadow: var(--shadow);
+    }
+
+    .sp-pane {
+      display: none;
+    }
+
+    .sp-pane.active {
+      display: block;
+    }
+
+    .sp-pane h3 {
+      font-size: 1.1rem;
+      color: var(--teal-darkest);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--teal-lighter);
+    }
+
+    /* Formulario de ajustes */
+    .form-field {
+      margin-bottom: 16px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: var(--teal-dark);
+      margin-bottom: 6px;
+    }
+
+    .form-field input,
+    .form-field select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--teal-lighter);
+      background: var(--teal-surface);
+      font-size: 0.9rem;
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .form-field input:focus {
+      border-color: var(--teal);
+    }
+
+    /* Toggle para dark mode */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--teal-lighter);
+      padding: 14px 18px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+    }
+
+    .switch-wrap {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch-wrap input {
+      display: none;
+    }
+
+    .slider-pill {
+      position: absolute;
+      inset: 0;
+      background: var(--teal-light);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .slider-pill::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 3px;
+      top: 3px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+
+    .switch-wrap input:checked+.slider-pill {
+      background: var(--teal-dark);
+    }
+
+    .switch-wrap input:checked+.slider-pill::before {
+      transform: translateX(24px);
+    }
+
+    /* Botón de cerrar sesión */
+    .logout-zone {
+      text-align: center;
+      padding: 36px 20px 20px;
+    }
+
+    .logout-zone p {
+      color: var(--text-medium);
+      margin-bottom: 22px;
+      font-size: 0.95rem;
+    }
+
+    .btn-logout {
+      background: var(--danger);
+      color: var(--white);
+      border: none;
+      padding: 12px 40px;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+    }
+
+    .btn-logout:hover {
+      background: #c62828;
+      transform: translateY(-2px);
+    }
+
+    /* ================================================================
+       SCROLLBAR PERSONALIZADA
+       ================================================================ */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--teal-light);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--teal);
+    }
+
+    /* ================================================================
+       MODAL DE TÉRMINOS Y NUEVO REGISTRO
+       ================================================================ */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(7, 94, 100, 0.8); /* --teal-darkest */
+      backdrop-filter: blur(5px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-content {
+      background: var(--teal-lightest);
+      border-radius: var(--radius);
+      padding: 32px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+      color: var(--text-dark);
+      animation: modalScale 0.3s ease;
+    }
+    @keyframes modalScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-title {
+      font-size: 1.4rem;
+      color: var(--teal-darkest);
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--teal-light);
+      padding-bottom: 12px;
+    }
+    .modal-body {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 24px;
+      cursor: pointer;
+      background: var(--teal-lighter);
+      padding: 16px;
+      border-radius: var(--radius-sm);
+    }
+    .checkbox-group input {
+      margin-top: 4px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--teal-dark);
+      cursor: pointer;
+    }
+    .checkbox-group label {
+      font-size: 0.9rem;
+      color: var(--text-dark);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+    .btn-disabled {
+      background: #94a3b8 !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+      box-shadow: none !important;
+      color: #cbd5e1 !important;
+      border: 3px solid #94a3b8 !important;
+    }
+  </style>
+  <!-- Cargar librería QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ================================================================ -->
+  <!-- PANTALLA DE LOGIN                                                 -->
+  <!-- ================================================================ -->
+  <div id="screen-login">
+    <div class="login-brand">
+      <span class="brand-icon">🏥</span>
+      <h1>MDI</h1>
+      <p>HEALTH &amp; MONITORING</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+      <button class="btn-iniciar" onclick="openApp()" style="width: 100%; max-width: 320px;">INICIAR SESIÓN</button>
+      <button class="btn-iniciar" onclick="showRoles()"
+        style="background: transparent; color: var(--teal-lighter); border: 2px solid var(--teal-lighter); font-size: 1rem; padding: 12px 40px; box-shadow: none; width: 100%; max-width: 320px;">REGISTRARSE</button>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- PANTALLA DE SELECCIÓN DE ROL                                      -->
+  <!-- ================================================================ -->
+  <div id="screen-roles"
+    style="display:none; width: 100vw; height: 100vh; background: linear-gradient(150deg, var(--teal-darkest) 0%, var(--teal) 55%, var(--teal-light) 100%); flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
+    <button onclick="showLogin()"
+      style="background: none; border: none; color: var(--teal-lighter); font-size: 1rem; cursor: pointer; position: absolute; top: 30px; left: 30px; font-weight: bold;">
+      ← Volver al inicio
+    </button>
+    <div class="login-brand">
+      <h2 style="color: var(--teal-lighter); font-size: 2.2rem; margin-bottom: 5px;">¿Quién eres?</h2>
+      <p>Selecciona tu perfil para continuar con el registro</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; align-items:center; width: 100%; max-width: 320px;">
+      <button class="btn-iniciar" onclick="showFormulario('Tutor')"
+        style="background: var(--teal-light); color: var(--teal-darkest); border: none; font-size: 1.1rem; padding: 16px; width: 100%;">
+        👨‍🏫 Soy Tutor
+      </button>
+      <button class="btn-iniciar" onclick="showFormulario('Cuidador')"
+        style="background: var(--teal-light); color: var(--teal-darkest); border: none; font-size: 1.1rem; padding: 16px; width: 100%;">
+        🧑‍⚕️ Soy Cuidador
+      </button>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- PANTALLA DE REGISTRO                                              -->
+  <!-- ================================================================ -->
+  <div id="screen-formulario"
+    style="display:none; width: 100vw; height: 100vh; background: linear-gradient(150deg, var(--teal-darkest) 0%, var(--teal) 55%, var(--teal-light) 100%); flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
+    <button onclick="showRoles()"
+      style="background: none; border: none; color: var(--teal-lighter); font-size: 1rem; cursor: pointer; position: absolute; top: 30px; left: 30px; font-weight: bold;">
+      ← Cambiar rol
+    </button>
+    <div class="login-brand">
+      <h2 style="color: var(--teal-lighter); font-size: 2.2rem; margin-bottom: 5px;">Registro</h2>
+      <p id="form-subtitle" style="color: var(--teal-lighter); opacity: 0.9;">Creando cuenta...</p>
+    </div>
+    <div
+      style="background: var(--teal-light); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); width: 100%; max-width: 600px;">
+      <form id="form-registro-unificado" onsubmit="mostrarModalTerminos(event)">
+        <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+          <div style="flex: 1;">
+            <label
+              style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Nombre Completo</label>
+            <input type="text" id="reg-nombre" placeholder="Ej: Juan Pérez" required
+              style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+          </div>
+          <div style="flex: 1;">
+            <label
+              style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Teléfono</label>
+            <input type="tel" id="reg-telefono" placeholder="Ej: 555-0123" required
+              style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+          </div>
+        </div>
+        <div style="margin-bottom: 16px;">
+          <label
+            style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Correo Electrónico</label>
+          <input type="email" id="reg-correo" placeholder="Ej: correo@ejemplo.com" required
+            style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+        </div>
+        <div style="margin-bottom: 24px;">
+          <label
+            style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Contraseña</label>
+          <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" required
+            style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+        </div>
+        
+        <button type="submit" class="btn-iniciar"
+          style="width: 100%; font-size: 1.1rem; padding: 14px; border-radius: 8px;">Continuar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- MODAL DE TÉRMINOS Y CONDICIONES                                   -->
+  <!-- ================================================================ -->
+  <div id="modal-terminos" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="modal-title">Términos y Condiciones</h3>
+      <div class="modal-body">
+        <p>Al utilizar la aplicación <strong>Monitoreo Dinámico Inteligente (MDI)</strong>, aceptas los siguientes
+          términos:</p>
+        <br>
+        <p><strong>1. Privacidad y Seguridad:</strong> Toda la información médica y personal registrada en la plataforma
+          es estrictamente confidencial y se almacena de forma segura.</p>
+        <br>
+        <p><strong>2. Uso de la Herramienta:</strong> Esta plataforma es una herramienta de asistencia tecnológica para
+          el monitoreo de pacientes y <strong>no sustituye</strong> el criterio, diagnóstico ni tratamiento de un médico
+          profesional certificado.</p>
+        <br>
+        <p><strong>3. Responsabilidad del Usuario:</strong> Al registrarte, te comprometes a ingresar información veraz,
+          precisa y actualizada sobre el paciente a tu cuidado.</p>
+      </div>
+
+      <div class="checkbox-group" onclick="toggleCheckbox(event)">
+        <input type="checkbox" id="check-terminos" onchange="validarAceptacion(event)">
+        <label for="check-terminos">He leído y acepto los Términos y Condiciones de Uso, así como la Política de Privacidad y Deslinde Legal.</label>
+      </div>
+
+      <button id="btn-finalizar" class="btn-iniciar" style="width: 100%; padding: 14px; border-radius: 8px; margin-bottom: 12px; font-size: 1rem;" disabled onclick="finalizarRegistro()">
+        Completar Registro
+      </button>
+      <button class="btn-iniciar" style="width: 100%; padding: 14px; border-radius: 8px; background: transparent; color: var(--teal-darkest); border: 2px solid var(--teal-darkest); box-shadow: none; font-size: 1rem;" onclick="cerrarModal()">
+        Cancelar y Revisar Datos
+      </button>
+    </div>
+  </div>
+
+
+  <!-- ================================================================ -->
+  <!-- APLICACIÓN PRINCIPAL                                              -->
+  <!-- ================================================================ -->
+  <div id="app">
+
+    <!-- ======================== SIDEBAR ======================== -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">🏥</span>
+        <div class="logo-text">
+          <h2>MDI</h2>
+          <small>HEALTH &amp; MONITORING</small>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-item active" id="nav-home" onclick="navigate('home')">
+          <span class="nav-icon">🏠</span><span>Inicio</span>
+        </div>
+        <div class="nav-item" id="nav-mensajes" onclick="navigate('mensajes')">
+          <span class="nav-icon">💬</span><span>Mensajes</span>
+        </div>
+        <div class="nav-item" id="nav-calendario" onclick="navigate('calendario')">
+          <span class="nav-icon">📅</span><span>Calendario</span>
+        </div>
+        <div class="nav-item" id="nav-paciente" onclick="navigate('paciente')">
+          <span class="nav-icon">👤</span><span>Paciente</span>
+        </div>
+        <div class="nav-item" id="nav-notas" onclick="navigate('notas')">
+          <span class="nav-icon">📝</span><span>Notas</span>
+        </div>
+        <div class="nav-item" id="nav-archivos" onclick="navigate('archivos')">
+          <span class="nav-icon">📁</span><span>Archivos</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="nav-item" id="nav-ajustes" onclick="navigate('ajustes')">
+          <span class="nav-icon">⚙️</span><span>Ajustes</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ======================== MAIN WRAPPER ======================== -->
+    <div class="main-wrapper">
+
+      <!-- HEADER SUPERIOR -->
+      <header class="top-header">
+        <div class="header-patient">
+          <div class="patient-avatar">👤</div>
+          <div>
+            <span class="patient-label">Paciente</span>
+            <span class="patient-name">Juan Pérez</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button class="header-icon-btn" title="Notificaciones" id="btn-notif">🔔</button>
+          <button class="header-icon-btn" title="Ajustes" id="btn-settings-hdr"
+            onclick="navigate('ajustes')">⚙️</button>
+        </div>
+      </header>
+
+      <!-- CONTENIDO -->
+      <main class="content-area">
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: INICIO (HOME)                                    -->
+        <!-- ======================================================== -->
+        <div id="section-home" class="section active">
+          <h2 class="section-title">🏠 Inicio</h2>
+          <div class="home-grid">
+
+            <div class="action-card" id="card-emergencia" onclick="navigate('emergencia')">
+              <span class="action-icon">🚨</span>
+              <h3>Emergencia</h3>
+            </div>
+
+            <div class="action-card" id="card-recordatorio" onclick="navigate('recordatorio')">
+              <span class="action-icon">⏰</span>
+              <h3>Recordatorio</h3>
+            </div>
+
+            <div class="action-card" id="card-completado" onclick="navigate('completado')">
+              <span class="action-icon">✅</span>
+              <h3>Completado</h3>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: EMERGENCIA                                       -->
+        <!-- ======================================================== -->
+        <div id="section-emergencia" class="section">
+          <button class="back-btn" onclick="navigate('home')">← Regresar</button>
+          <h2 class="section-title">🚨 Emergencia</h2>
+          <div class="card" style="max-width:580px;">
+            <div class="emergency-header">↩️ Emergencia</div>
+            <p style="font-weight:bold; margin-bottom:12px; font-size:0.88rem; color:var(--teal-dark);">Números de
+              emergencia</p>
+            <div class="emergency-row">
+              <span class="e-name">Felipe</span>
+              <span class="e-phone">📞 9991854672</span>
+            </div>
+            <div class="emergency-row">
+              <span class="e-name">Mariana</span>
+              <span class="e-phone">📞 9996854691</span>
+            </div>
+            <div class="emergency-row">
+              <span class="e-name">Irene</span>
+              <span class="e-phone">📞 9997854621</span>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: RECORDATORIO                                     -->
+        <!-- ======================================================== -->
+        <div id="section-recordatorio" class="section">
+          <button class="back-btn" onclick="navigate('home')">← Regresar</button>
+          <h2 class="section-title">⏰ Recordatorio</h2>
+          <div class="card" style="max-width:580px;">
+            <div class="placeholder-bar"></div>
+            <div class="placeholder-bar"></div>
+            <div class="placeholder-bar"></div>
+            <div class="pending-chip">Función en desarrollo — pendiente</div>
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: COMPLETADO                                       -->
+        <!-- ======================================================== -->
+        <div id="section-completado" class="section">
+          <button class="back-btn" onclick="navigate('home')">← Regresar</button>
+          <h2 class="section-title">✅ Completado</h2>
+          <div class="card" style="max-width:480px;">
+            <div
+              style="background:var(--teal-medium);border-radius:var(--radius-sm);padding:10px 16px;text-align:center;margin-bottom:16px;">
+              <strong style="color:white;font-size:1rem;">Completado</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--teal-darkest);">
+              <span>↩️</span><strong>Tareas completadas</strong>
+            </div>
+            <div class="task-item">
+              <input type="checkbox" id="t-comida" checked>
+              <label for="t-comida">🍽️ Comida</label>
+            </div>
+            <div class="task-item">
+              <input type="checkbox" id="t-bano" checked>
+              <label for="t-bano">🛁 Baño</label>
+            </div>
+            <div class="task-item">
+              <input type="checkbox" id="t-med" checked>
+              <label for="t-med">💊 Medicación</label>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: MENSAJES                                         -->
+        <!-- ======================================================== -->
+        <div id="section-mensajes" class="section">
+          <h2 class="section-title">💬 Mensajes</h2>
+          <div class="messages-layout">
+
+            <!-- Lista de contactos -->
+            <div class="contacts-panel">
+              <div class="contacts-top-bar">
+                <h3>Mensajes</h3>
+                <span>👤</span>
+              </div>
+              <div class="quick-avatars">
+                <div class="avatar-sm">F</div>
+                <div class="avatar-sm">M</div>
+                <div class="avatar-sm">I</div>
+              </div>
+              <div class="contact-item selected" id="ci-felipe"
+                onclick="selectContact(this,'Felipe','¿Hola, cómo se encuentra juan?')">
+                <div class="c-avatar">F</div>
+                <div class="c-info">
+                  <strong>Felipe</strong>
+                  <span>¿Hola, cómo se encuentra juan?</span>
+                </div>
+                <span class="c-time">19:30</span>
+              </div>
+              <div class="contact-item" id="ci-mariana" onclick="selectContact(this,'Mariana','Si, es su médico')">
+                <div class="c-avatar">M</div>
+                <div class="c-info">
+                  <strong>Mariana</strong>
+                  <span>Si, es su médico</span>
+                </div>
+                <span class="c-time">3:57</span>
+              </div>
+              <div class="contact-item" id="ci-irene"
+                onclick="selectContact(this,'Irene','Está en la mesita de noche')">
+                <div class="c-avatar">I</div>
+                <div class="c-info">
+                  <strong>Irene</strong>
+                  <span>Está en la mesita de noche</span>
+                </div>
+                <span class="c-time">9:00</span>
+              </div>
+            </div>
+
+            <!-- Ventana de chat -->
+            <div class="chat-panel">
+              <div class="chat-header-bar">
+                <div class="c-avatar"
+                  style="width:36px;height:36px;font-size:0.85rem;border:2px solid rgba(255,255,255,0.4);">F</div>
+                <strong id="chat-name">Felipe</strong>
+              </div>
+              <div class="chat-messages-area" id="chat-msgs">
+                <div class="bubble bubble-in">
+                  ¿Hola, cómo se encuentra juan? <div class="bubble-tick">✓✓</div>
+                </div>
+                <div class="bubble bubble-out">
+                  Está bien, ya tomó su medicina <div class="bubble-tick">✓✓</div>
+                </div>
+                <div class="bubble bubble-out">
+                  Está bien, falta su comida <div class="bubble-tick">✓✓</div>
+                </div>
+                <div class="bubble bubble-out">
+                  Sí, tengo la alarma puesta <div class="bubble-tick">✓✓</div>
+                </div>
+              </div>
+              <div class="chat-input-row">
+                <input type="text" id="chat-input" placeholder="Aa Escribe aquí">
+                <button class="send-btn" id="btn-send" onclick="sendMsg()">➤</button>
+              </div>
+            </div>
+
+          </div><!-- end messages-layout -->
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: CALENDARIO                                       -->
+        <!-- ======================================================== -->
+        <div id="section-calendario" class="section">
+          <h2 class="section-title">📅 Calendario</h2>
+          <div class="calendar-layout">
+
+            <!-- Cuadrícula del mes -->
+            <div class="calendar-card">
+              <div class="cal-top">
+                <button class="cal-arrow" id="cal-prev">&#8249;</button>
+                <h3>🔔 Julio 2026 🔍</h3>
+                <button class="cal-arrow" id="cal-next">&#8250;</button>
+              </div>
+              <div class="cal-weekdays">
+                <span>LUN</span><span>MAR</span><span>MIÉ</span>
+                <span>JUE</span><span>VIE</span><span>SÁB</span><span>DOM</span>
+              </div>
+              <div class="cal-days">
+                <!-- Julio 2026: empieza el miércoles (col 3) -->
+                <div class="cal-day empty"></div>
+                <div class="cal-day empty"></div>
+                <div class="cal-day">1</div>
+                <div class="cal-day">2</div>
+                <div class="cal-day">3</div>
+                <div class="cal-day">4</div>
+                <div class="cal-day">5</div>
+                <div class="cal-day">6</div>
+                <div class="cal-day">7</div>
+                <div class="cal-day">8</div>
+                <div class="cal-day">9</div>
+                <div class="cal-day">10</div>
+                <div class="cal-day">11</div>
+                <div class="cal-day">12</div>
+                <div class="cal-day">13</div>
+                <div class="cal-day">14</div>
+                <div class="cal-day">15</div>
+                <div class="cal-day event" title="Cita con el doctor Ramírez">16</div>
+                <div class="cal-day">17</div>
+                <div class="cal-day">18</div>
+                <div class="cal-day">19</div>
+                <div class="cal-day">20</div>
+                <div class="cal-day">21</div>
+                <div class="cal-day">22</div>
+                <div class="cal-day">23</div>
+                <div class="cal-day event" title="Día de rehabilitación">24</div>
+                <div class="cal-day">25</div>
+                <div class="cal-day">26</div>
+                <div class="cal-day">27</div>
+                <div class="cal-day">28</div>
+                <div class="cal-day">29</div>
+                <div class="cal-day today">30</div>
+                <div class="cal-day">31</div>
+                <div class="cal-day empty"></div>
+                <div class="cal-day empty"></div>
+              </div>
+            </div>
+
+            <!-- Eventos pendientes -->
+            <div class="pending-panel">
+              <h3>📋 Pendientes</h3>
+              <div class="event-item">
+                <div class="ev-date">16/07/26</div>
+                <div class="ev-text">Cita pendiente con el doctor Ramírez</div>
+              </div>
+              <div class="event-item">
+                <div class="ev-date">24/07/26</div>
+                <div class="ev-text">Día de rehabilitación en la institución</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: PACIENTE                                         -->
+        <!-- ======================================================== -->
+        <div id="section-paciente" class="section">
+          <h2 class="section-title">👤 Perfil del Paciente</h2>
+
+          <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px;">
+            <!-- Contenedor Foto y QR -->
+            <div style="flex: 1; min-width: 250px; background: var(--teal-light); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 16px;">
+              <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: white; overflow: hidden; border: 4px solid var(--teal-surface);">
+                👤
+              </div>
+              <h3 style="color: var(--teal-darkest); margin: 0;" id="p-display-name">Juan Pérez</h3>
+              <p style="color: var(--teal-dark); margin: 0; font-size: 0.9rem;">Paciente Principal</p>
+              
+              <hr style="width: 100%; border: none; border-top: 1px solid rgba(0,0,0,0.1); margin: 8px 0;">
+              
+              <div style="text-align: center;">
+                <p style="font-size: 0.85rem; color: var(--teal-dark); font-weight: bold; margin-bottom: 8px;">QR de Emergencia</p>
+                <div style="background: white; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" id="qrcode">
+                  <!-- qrcode.js renderizará aquí -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Formulario de Datos -->
+            <div style="flex: 2; min-width: 300px; background: var(--teal-light); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);">
+              
+              <!-- Barra de tabs interna para datos y archivos -->
+              <div class="tab-bar" style="margin-bottom: 20px;">
+                <button class="tab-btn active" id="ptab-general" onclick="switchTab('paciente', 'general', this)">📋 Datos Generales</button>
+                <button class="tab-btn" id="ptab-archivos" onclick="switchTab('paciente', 'archivos', this)">📁 Archivos</button>
+              </div>
+              
+              <!-- TAB: Datos Generales -->
+              <div id="ptab-pane-general" class="tab-pane active">
+                <form id="form-paciente-perfil" onsubmit="event.preventDefault(); generarResumenQR(); alert('Perfil actualizado y QR regenerado');">
+                  
+                  <h4 style="color: var(--teal-darkest); border-bottom: 1px solid var(--teal-lighter); padding-bottom: 8px; margin-bottom: 16px;">Información Básica</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Nombre Completo</label>
+                      <input type="text" id="p-nombre-gen" value="Juan Pérez" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Edad</label>
+                      <input type="number" id="p-edad" value="68" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Fecha de Nacimiento</label>
+                      <input type="date" id="p-fecha" value="1958-05-14" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Género</label>
+                      <select id="p-genero" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                        <option selected>Masculino</option>
+                        <option>Femenino</option>
+                        <option>Otro</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Seguro Social</label>
+                      <input type="text" id="p-ss" value="IMSS-123456789" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                  </div>
+
+                  <h4 style="color: var(--teal-darkest); border-bottom: 1px solid var(--teal-lighter); padding-bottom: 8px; margin-bottom: 16px;">Información Médica</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Tipo de Sangre</label>
+                      <select id="p-sangre" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                        <option selected>O+</option>
+                        <option>O-</option>
+                        <option>A+</option>
+                        <option>A-</option>
+                        <option>B+</option>
+                        <option>B-</option>
+                        <option>AB+</option>
+                        <option>AB-</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Alergias</label>
+                      <input type="text" id="p-alergias" value="Penicilina, Nueces" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Condición Médica</label>
+                      <textarea id="p-condicion" rows="2" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; resize: vertical;">Hipertensión arterial, Diabetes Tipo 2</textarea>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Medicamentos Actuales</label>
+                      <textarea id="p-medicamentos" rows="2" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; resize: vertical;">Metformina 500mg, Losartán 50mg</textarea>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Dispositivos Médicos</label>
+                      <input type="text" id="p-dispositivos" value="Marcapasos, Glucómetro" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                  </div>
+
+                  <h4 style="color: var(--teal-darkest); border-bottom: 1px solid var(--teal-lighter); padding-bottom: 8px; margin-bottom: 16px;">Contacto de Emergencia</h4>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Nombre del Contacto</label>
+                      <input type="text" id="p-contacto-nombre" value="María Pérez" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Teléfono</label>
+                      <input type="tel" id="p-contacto-tel" value="555-987-6543" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
+                    </div>
+                  </div>
+
+                  <div style="display: flex; justify-content: flex-end; gap: 16px;">
+                    <button type="button" style="padding: 10px 20px; border-radius: var(--radius-sm); border: 2px solid var(--teal); background: transparent; color: var(--teal-darkest); font-weight: bold; cursor: pointer;">Cancelar</button>
+                    <button type="submit" class="btn-iniciar" style="padding: 10px 24px; border-radius: var(--radius-sm); font-size: 1rem;">Guardar Cambios</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- TAB: Archivos -->
+              <div id="ptab-pane-archivos" class="tab-pane">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <h4 style="color: var(--teal-darkest); margin: 0;">Documentos Adjuntos</h4>
+                  <button class="btn-iniciar" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 4px;">+ Subir Archivo</button>
+                </div>
+                <div class="folder-item" style="background: var(--teal-surface); margin-bottom: 8px;"><span>📄</span><span>Historial_Clinico_2026.pdf</span></div>
+                <div class="folder-item" style="background: var(--teal-surface); margin-bottom: 8px;"><span>🖼️</span><span>Radiografia_Torax.png</span></div>
+                <div class="folder-item" style="background: var(--teal-surface); margin-bottom: 8px;"><span>📄</span><span>Receta_Metformina.pdf</span></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: RESUMEN DE EMERGENCIA (VISTA OCULTA)             -->
+        <!-- ======================================================== -->
+        <div id="view-resumen-emergencia" style="display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--teal-lightest); z-index: 9999; padding: 24px; box-sizing: border-box; overflow-y: auto;">
+          <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);">
+            <div style="text-align: center; margin-bottom: 24px; border-bottom: 2px solid var(--teal-light); padding-bottom: 16px;">
+              <div style="font-size: 3rem; margin-bottom: 8px;">🚨</div>
+              <h1 style="color: var(--teal-darkest); margin: 0; font-size: 2rem;">Resumen de Emergencia</h1>
+              <p style="color: var(--teal-dark); margin-top: 8px;">Datos médicos vitales escaneados vía QR</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Nombre del Paciente</strong>
+                <span id="re-nombre" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                  <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Tipo de Sangre</strong>
+                  <span id="re-sangre" style="font-size: 1.1rem; color: var(--danger); font-weight: bold;">--</span>
+                </div>
+                <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                  <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Edad</strong>
+                  <span id="re-edad" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
+                </div>
+              </div>
+
+              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Datos generales</strong>
+                <span id="re-detalles" style="font-size: 1rem; color: var(--text-dark);">--</span>
+              </div>
+
+              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Alergias</strong>
+                <span id="re-alergias" style="font-size: 1.1rem; color: var(--danger); font-weight: bold;">--</span>
+              </div>
+
+              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Condición Médica</strong>
+                <span id="re-condicion" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
+              </div>
+
+              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Medicamentos Actuales</strong>
+                <span id="re-medicamentos" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
+              </div>
+
+              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
+                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Contacto de Emergencia</strong>
+                <div style="font-size: 1.1rem; color: var(--text-dark);">
+                  <span id="re-contacto-nombre">--</span> <br>
+                  <strong style="color: var(--teal-dark);">📞 <span id="re-contacto-tel">--</span></strong>
+                </div>
+              </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 32px;">
+              <button onclick="cerrarResumenEmergencia()" class="btn-iniciar" style="padding: 12px 24px; font-size: 1rem; border-radius: var(--radius-sm);">Volver a la App</button>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: NOTAS                                            -->
+        <!-- ======================================================== -->
+        <div id="section-notas" class="section">
+          <h2 class="section-title">📝 Notas</h2>
+          <div class="notes-layout">
+
+            <!-- Panel izquierdo: lista de notas -->
+            <div class="notes-list-panel">
+              <div class="search-bar">
+                <input type="text" placeholder="Buscar notas...">
+                <span>🔍</span>
+              </div>
+              <button class="new-note-btn" id="btn-new-note" onclick="newNote()">☰ Nueva Nota</button>
+              <div class="note-item"
+                onclick="loadNote('16/07/26','Cita pendiente con el doctor Ramírez','Ir con el doctor Ismael Ramírez\nen la dirección --------\nllevar documentos --------')">
+                <div>
+                  <div class="n-date">16/07/26</div>
+                  <div class="n-text">Cita pendiente con el doctor Ramírez</div>
+                </div>
+                <span class="n-opts">⋮</span>
+              </div>
+              <div class="note-item"
+                onclick="loadNote('16/07/26','Cita pendiente con el doctor Ramírez','Ir con el doctor Ismael Ramírez\nen la dirección --------\nllevar documentos --------')">
+                <div>
+                  <div class="n-date">16/07/26</div>
+                  <div class="n-text">Cita pendiente con el doctor Ramírez</div>
+                </div>
+                <span class="n-opts">⋮</span>
+              </div>
+              <div class="note-item"
+                onclick="loadNote('16/07/26','Cita pendiente con el doctor Ramírez','Ir con el doctor Ismael Ramírez\nen la dirección --------\nllevar documentos --------')">
+                <div>
+                  <div class="n-date">16/07/26</div>
+                  <div class="n-text">Cita pendiente con el doctor Ramírez</div>
+                </div>
+                <span class="n-opts">⋮</span>
+              </div>
+              <div class="note-item"
+                onclick="loadNote('16/07/26','Cita pendiente con el doctor Ramírez','Ir con el doctor Ismael Ramírez\nen la dirección --------\nllevar documentos --------')">
+                <div>
+                  <div class="n-date">16/07/26</div>
+                  <div class="n-text">Cita pendiente con el doctor Ramírez</div>
+                </div>
+                <span class="n-opts">⋮</span>
+              </div>
+            </div>
+
+            <!-- Panel derecho: editor de nota -->
+            <div class="note-editor-panel">
+              <div class="note-date-header">
+                <strong id="note-date-display">16/07/26</strong>
+              </div>
+              <input class="note-title-input" id="note-title" placeholder="Título de la nota"
+                value="Cita pendiente con el doctor Ramírez">
+              <textarea class="note-body-area" id="note-body" rows="8">Ir con el doctor Ismael Ramírez
+en la dirección --------
+llevar documentos --------</textarea>
+              <div style="display:flex;gap:10px;align-items:center;margin-top:4px;">
+                <span style="font-size:1.2rem;cursor:pointer;opacity:0.7;" title="Formato de texto">Aa</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: ARCHIVOS                                         -->
+        <!-- ======================================================== -->
+        <div id="section-archivos" class="section">
+          <h2 class="section-title">📁 Archivos</h2>
+
+          <div class="archivos-tab-bar">
+            <button class="active" id="atab-docs" onclick="switchTab('archivos','docs',this)">📄 Documentos</button>
+            <button id="atab-subir" onclick="switchTab('archivos','subir',this)">⬆️ Subir</button>
+            <button id="atab-imgs" onclick="switchTab('archivos','imgs',this)">🖼️ Imágenes</button>
+          </div>
+
+          <div class="search-bar">
+            <input type="text" placeholder="Buscar archivos...">
+            <span>🔍</span>
+          </div>
+
+          <!-- Tab: Documentos -->
+          <div id="atab-pane-docs" class="tab-pane active">
+            <div class="folder-row">
+              <div class="fr-left"><span>📁</span><span>Documentos</span></div>
+              <span class="fr-opts">⋮</span>
+            </div>
+            <div class="folder-item"><span>📁</span><span>carpeta 1</span></div>
+            <div class="folder-item"><span>📁</span><span>carpeta 2</span></div>
+            <div class="folder-item"><span>📁</span><span>carpeta 3</span></div>
+          </div>
+
+          <!-- Tab: Subir -->
+          <div id="atab-pane-subir" class="tab-pane">
+            <div class="folder-row">
+              <div class="fr-left"><span>📁</span><span>Subir archivos</span></div>
+              <span class="fr-opts">⋮</span>
+            </div>
+            <div class="folder-item"><span>📁</span><span>carpeta 1</span></div>
+            <div class="folder-item"><span>📁</span><span>carpeta 2</span></div>
+            <div class="folder-item"><span>📁</span><span>carpeta 3</span></div>
+          </div>
+
+          <!-- Tab: Imágenes -->
+          <div id="atab-pane-imgs" class="tab-pane">
+            <div class="folder-row">
+              <div class="fr-left"><span>📁</span><span>Subir imágenes</span></div>
+              <span class="fr-opts">⋮</span>
+            </div>
+            <div class="folder-item"><span>📁</span><span>carpeta 1</span></div>
+            <div class="folder-item"><span>📁</span><span>carpeta 2</span></div>
+            <div class="folder-item"><span>📁</span><span>carpeta 3</span></div>
+          </div>
+
+        </div>
+
+
+        <!-- ======================================================== -->
+        <!-- SECCIÓN: AJUSTES                                          -->
+        <!-- ======================================================== -->
+        <div id="section-ajustes" class="section">
+          <h2 class="section-title">⚙️ Ajustes</h2>
+          <div class="settings-layout">
+
+            <!-- Menú lateral de ajustes -->
+            <div class="settings-menu">
+              <div class="settings-profile">
+                <div class="settings-avatar">👤</div>
+                <span class="sp-label">Paciente</span>
+                <span class="sp-name">Juan Pérez</span>
+              </div>
+              <div class="settings-item active" id="sitem-perfil" onclick="switchSettings('perfil',this)">
+                <div class="si-left">👤 Detalles del perfil</div><span>›</span>
+              </div>
+              <div class="settings-item" id="sitem-seguridad" onclick="switchSettings('seguridad',this)">
+                <div class="si-left">🔒 Seguridad</div><span>›</span>
+              </div>
+              <div class="settings-item" id="sitem-noti" onclick="switchSettings('noti',this)">
+                <div class="si-left">🔔 Notificaciones</div><span>›</span>
+              </div>
+              <div class="settings-item" id="sitem-dark" onclick="switchSettings('dark',this)">
+                <div class="si-left">🌙 Dark mode</div><span>›</span>
+              </div>
+              <div class="settings-item" id="sitem-acerca" onclick="switchSettings('acerca',this)">
+                <div class="si-left">ℹ️ Acerca de la aplicación</div><span>›</span>
+              </div>
+              <div class="settings-item" id="sitem-ayuda" onclick="switchSettings('ayuda',this)">
+                <div class="si-left">❓ Ayuda</div><span>›</span>
+              </div>
+              <div class="settings-item danger" id="sitem-cerrar" onclick="switchSettings('cerrar',this)">
+                <div class="si-left">✕ Cerrar sesión</div><span>›</span>
+              </div>
+            </div>
+
+            <!-- Panel de detalle del ajuste seleccionado -->
+            <div class="settings-detail">
+
+              <!-- Sub-panel: Perfil -->
+              <div id="sp-perfil" class="sp-pane active">
+                <h3>👤 Detalles del Perfil</h3>
+                <form id="form-perfil-paciente" onsubmit="event.preventDefault(); savePatientProfile();">
+                  <div class="form-field">
+                    <label>Nombre</label>
+                    <input type="text" value="Juan Pérez" id="p-nombre" required>
+                  </div>
+                  <div style="display:flex; gap:16px;">
+                    <div class="form-field" style="flex:1;">
+                      <label>Edad</label>
+                      <input type="number" value="82" id="p-edad" min="0">
+                    </div>
+                    <div class="form-field" style="flex:1;">
+                      <label>Fecha de nacimiento</label>
+                      <input type="date" value="1944-03-15" id="p-fecha">
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:16px;">
+                    <div class="form-field" style="flex:1;">
+                      <label>Género</label>
+                      <input type="text" value="Masculino" id="p-genero">
+                    </div>
+                    <div class="form-field" style="flex:1;">
+                      <label>Tipo de Sangre</label>
+                      <input type="text" value="O+" id="p-sangre">
+                    </div>
+                  </div>
+                  <div class="form-field">
+                    <label>Alergias</label>
+                    <input type="text" value="Ninguna conocida" id="p-alergias">
+                  </div>
+                  <div class="form-field">
+                    <label>Condiciones Médicas / Diagnóstico</label>
+                    <input type="text" value="Hipertensión" id="p-condiciones">
+                  </div>
+                  <div class="form-field">
+                    <label>Contacto de emergencia</label>
+                    <input type="text" value="Carlos Pérez — 555-0202" id="p-contacto">
+                  </div>
+                  <div style="margin-top: 16px; text-align: right;">
+                    <button type="submit"
+                      style="background: var(--teal); color: var(--white); padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s;">💾
+                      Guardar Cambios</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Sub-panel: Seguridad -->
+              <div id="sp-seguridad" class="sp-pane">
+                <h3>🔒 Seguridad</h3>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="pending-chip">pendiente</div>
+              </div>
+
+              <!-- Sub-panel: Notificaciones -->
+              <div id="sp-noti" class="sp-pane">
+                <h3>🔔 Notificaciones</h3>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="pending-chip">pendiente</div>
+              </div>
+
+              <!-- Sub-panel: Dark mode -->
+              <div id="sp-dark" class="sp-pane">
+                <h3>🌙 Dark Mode</h3>
+                <div class="toggle-row">
+                  <span>Activar modo oscuro</span>
+                  <label class="switch-wrap">
+                    <input type="checkbox" id="dark-toggle" onchange="toggleDark(this)">
+                    <span class="slider-pill"></span>
+                  </label>
+                </div>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="pending-chip">pendiente</div>
+              </div>
+
+              <!-- Sub-panel: Acerca de -->
+              <div id="sp-acerca" class="sp-pane">
+                <h3>ℹ️ Acerca de la Aplicación</h3>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="pending-chip">pendiente</div>
+              </div>
+
+              <!-- Sub-panel: Ayuda -->
+              <div id="sp-ayuda" class="sp-pane">
+                <h3>❓ Ayuda</h3>
+                <div class="folder-item">📌 Preguntas frecuentes</div>
+                <div class="placeholder-bar" style="margin-top:10px;"></div>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+              </div>
+
+              <!-- Sub-panel: Cerrar sesión -->
+              <div id="sp-cerrar" class="sp-pane">
+                <h3>✕ Cerrar Sesión</h3>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="placeholder-bar"></div>
+                <div class="logout-zone">
+                  <p>¿Estás seguro de que deseas cerrar sesión de la aplicación MDI?</p>
+                  <button class="btn-logout" id="btn-logout" onclick="logout()">Cerrar Sesión</button>
+                </div>
+              </div>
+
+            </div><!-- end settings-detail -->
+          </div><!-- end settings-layout -->
+        </div><!-- end section-ajustes -->
+
+
+      </main><!-- end content-area -->
+    </div><!-- end main-wrapper -->
+  </div><!-- end app -->
+
+
+  <!-- ================================================================ -->
+  <!-- JAVASCRIPT — Lógica de navegación e interacción                  -->
+  <!-- ================================================================ -->
+  <script>
+
+    // Inicializar QR y comprobación de emergencia
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Comprobar si estamos en la vista de emergencia vía QR
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('emergencia') === '1') {
+        const dataStr = params.get('d') || params.get('data');
+        if (dataStr) {
+          try {
+            const data = params.get('d') ? decodificarDatos(dataStr) : JSON.parse(decodeURIComponent(dataStr));
+            mostrarResumenEmergencia(data);
+            return; // Detener flujo normal si es vista de emergencia
+          } catch(e) { console.error("Error leyendo datos del QR", e); }
+        }
+      }
+      
+      // 2. Recuperar la última edición del prototipo en este navegador.
+      cargarPerfilLocal();
+      setTimeout(generarResumenQR, 500);
+      document.getElementById('form-paciente-perfil')?.addEventListener('input', generarResumenQR);
+      document.getElementById('form-paciente-perfil')?.addEventListener('change', generarResumenQR);
+    });
+
+    let qrcodeInstance = null;
+
+    function valorPaciente(id) {
+      return document.getElementById(id)?.value?.trim() || '';
+    }
+
+    function leerPaciente() {
+      return {
+        nombre: valorPaciente('p-nombre-gen'), sangre: valorPaciente('p-sangre'), alergias: valorPaciente('p-alergias'),
+        condicion: valorPaciente('p-condicion'), medicamentos: valorPaciente('p-medicamentos'), dispositivos: valorPaciente('p-dispositivos'),
+        edad: valorPaciente('p-edad'), nacimiento: valorPaciente('p-fecha'), genero: valorPaciente('p-genero'), seguro: valorPaciente('p-ss'),
+        contacto_nombre: valorPaciente('p-contacto-nombre'), contacto_tel: valorPaciente('p-contacto-tel')
+      };
+    }
+    function codificarDatos(data) { return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+    function decodificarDatos(data) { return JSON.parse(decodeURIComponent(escape(atob(data)))); }
+    function guardarPerfilLocal(data) { localStorage.setItem('mdi-perfil-paciente', JSON.stringify(data)); }
+    function cargarPerfilLocal() {
+      try {
+        const guardado = JSON.parse(localStorage.getItem('mdi-perfil-paciente') || 'null');
+        if (!guardado) return;
+        const campos = { nombre:'p-nombre-gen', sangre:'p-sangre', alergias:'p-alergias', condicion:'p-condicion', medicamentos:'p-medicamentos', dispositivos:'p-dispositivos', edad:'p-edad', nacimiento:'p-fecha', genero:'p-genero', seguro:'p-ss', contacto_nombre:'p-contacto-nombre', contacto_tel:'p-contacto-tel' };
+        Object.entries(campos).forEach(([llave, id]) => { if (guardado[llave] !== undefined && document.getElementById(id)) document.getElementById(id).value = guardado[llave]; });
+      } catch (error) { console.warn('No se pudo recuperar el perfil local', error); }
+    }
+
+    function generarResumenQR() {
+      const resumen = leerPaciente();
+
+      // Actualizar nombre en la UI superior
+      const displayName = document.getElementById('p-display-name');
+      if(displayName) displayName.innerText = resumen.nombre || 'Paciente';
+      guardarPerfilLocal(resumen);
+
+      const qrUrl = window.location.href.split('?')[0] + '?emergencia=1&d=' + encodeURIComponent(codificarDatos(resumen));
+
+      const qrContainer = document.getElementById('qrcode');
+      if (qrContainer) {
+        qrContainer.innerHTML = ''; // Limpiar anterior
+        qrcodeInstance = new QRCode(qrContainer, {
+          text: qrUrl,
+          width: 160,
+          height: 160,
+          colorDark : "#000000",
+          colorLight : "#ffffff",
+          correctLevel : QRCode.CorrectLevel.L
+        });
+      }
+    }
+
+    function mostrarResumenEmergencia(data) {
+      // La ficha vive dentro de #app; si se oculta el padre, no se verá al escanear.
+      document.getElementById('app').classList.add('visible');
+      document.getElementById('screen-login').style.display = 'none';
+      
+      document.getElementById('re-nombre').innerText = data.nombre || '--';
+      document.getElementById('re-sangre').innerText = data.sangre || '--';
+      document.getElementById('re-alergias').innerText = data.alergias || '--';
+      document.getElementById('re-condicion').innerText = data.condicion || '--';
+      document.getElementById('re-medicamentos').innerText = data.medicamentos || '--';
+      document.getElementById('re-edad').innerText = data.edad || '--';
+      document.getElementById('re-contacto-nombre').innerText = data.contacto_nombre || '--';
+      document.getElementById('re-contacto-tel').innerText = data.contacto_tel || '--';
+      const detalles = [data.genero, data.nacimiento ? 'Nacimiento: ' + data.nacimiento : '', data.seguro ? 'Seguro: ' + data.seguro : '', data.dispositivos ? 'Dispositivos: ' + data.dispositivos : ''].filter(Boolean);
+      document.getElementById('re-detalles').innerText = detalles.join(' · ') || '--';
+
+      const view = document.getElementById('view-resumen-emergencia');
+      if (view) {
+        view.style.display = 'block';
+      }
+    }
+
+    function cerrarResumenEmergencia() {
+      // Remover los params de la URL para volver a la app normal
+      window.history.replaceState({}, document.title, window.location.pathname);
+      document.getElementById('view-resumen-emergencia').style.display = 'none';
+      document.getElementById('screen-login').style.display = 'flex'; // Volver al inicio normal
+    }
+
+    let rolActivo = '';
+
+    function ocultarPantallas() {
+      document.getElementById('screen-login').style.display = 'none';
+      document.getElementById('screen-roles').style.display = 'none';
+      document.getElementById('screen-formulario').style.display = 'none';
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Entrar a la app desde el login
+    ---------------------------------------------------------------- */
+    function openApp() {
+      ocultarPantallas();
+      document.getElementById('app').classList.add('visible');
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIONES: Navegación del Flujo de Registro
+    ---------------------------------------------------------------- */
+    function showLogin() {
+      ocultarPantallas();
+      document.getElementById('screen-login').style.display = 'flex';
+    }
+
+    function showRoles() {
+      ocultarPantallas();
+      document.getElementById('screen-roles').style.display = 'flex';
+    }
+
+    function showFormulario(rol) {
+      rolActivo = rol;
+      document.getElementById('form-subtitle').innerText = `Creando cuenta para Perfil: ${rol}`;
+      ocultarPantallas();
+      document.getElementById('screen-formulario').style.display = 'flex';
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIONES: Modal de Términos y Registro Final
+    ---------------------------------------------------------------- */
+    function mostrarModalTerminos(evento) {
+      evento.preventDefault(); 
+      const modal = document.getElementById('modal-terminos');
+      const checkbox = document.getElementById('check-terminos');
+      const botonFinalizar = document.getElementById('btn-finalizar');
+
+      checkbox.checked = false;
+      botonFinalizar.disabled = true;
+      botonFinalizar.classList.add('btn-disabled');
+
+      modal.classList.add('active');
+    }
+
+    function cerrarModal() {
+      document.getElementById('modal-terminos').classList.remove('active');
+    }
+
+    function validarAceptacion(evento) {
+      if (evento) evento.stopPropagation();
+      const isChecked = document.getElementById('check-terminos').checked;
+      const botonFinalizar = document.getElementById('btn-finalizar');
+      
+      botonFinalizar.disabled = !isChecked;
+      if (isChecked) {
+        botonFinalizar.classList.remove('btn-disabled');
+      } else {
+        botonFinalizar.classList.add('btn-disabled');
+      }
+    }
+
+    function toggleCheckbox(evento) {
+      if (evento.target.id !== 'check-terminos') {
+        const checkbox = document.getElementById('check-terminos');
+        checkbox.checked = !checkbox.checked;
+        validarAceptacion();
+      }
+    }
+
+    function finalizarRegistro() {
+      const nombreUsuario = document.getElementById('reg-nombre').value;
+      cerrarModal();
+      
+      alert(`¡Registro Completado con Éxito!\n\nBienvenido/a ${nombreUsuario}.\nTu cuenta con el rol de [${rolActivo}] ha sido creada en MDI.`);
+      
+      document.getElementById('form-registro-unificado').reset();
+      openApp(); 
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Navegar entre secciones principales
+       - Oculta todas las secciones
+       - Muestra la sección pedida
+       - Actualiza el ítem activo en el sidebar
+    ---------------------------------------------------------------- */
+    // Secciones que tienen un ítem de nav en el sidebar
+    var mainSections = ['home', 'mensajes', 'calendario', 'paciente', 'notas', 'archivos', 'ajustes'];
+    // Sub-secciones que pertenecen al home
+    var homeSubs = ['emergencia', 'recordatorio', 'completado'];
+
+    function navigate(id) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.section').forEach(function (s) {
+        s.classList.remove('active');
+      });
+
+      // Mostrar la sección seleccionada
+      var target = document.getElementById('section-' + id);
+      if (target) target.classList.add('active');
+
+      // Actualizar el nav activo en el sidebar
+      document.querySelectorAll('.nav-item').forEach(function (n) {
+        n.classList.remove('active');
+      });
+
+      var navEl = document.getElementById('nav-' + id);
+      if (navEl) {
+        navEl.classList.add('active');
+      } else if (homeSubs.indexOf(id) !== -1) {
+        // Sub-secciones del home: el sidebar sigue marcando "Inicio"
+        document.getElementById('nav-home').classList.add('active');
+      }
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN GENÉRICA: Cambiar tab dentro de una sección
+       Uso:
+         switchTab('paciente', 'medicos', btnElement)
+         switchTab('archivos', 'docs', btnElement)
+    ---------------------------------------------------------------- */
+    function switchTab(group, paneId, btn) {
+      // Prefijos de pane según el grupo
+      var panePrefix = (group === 'paciente') ? 'ptab-pane-' : 'atab-pane-';
+
+      // Ocultar todos los panes del grupo
+      var allPanes = document.querySelectorAll(
+        '[id^="' + panePrefix + '"]'
+      );
+      allPanes.forEach(function (p) { p.classList.remove('active'); });
+
+      // Mostrar el pane seleccionado
+      var target = document.getElementById(panePrefix + paneId);
+      if (target) target.classList.add('active');
+
+      // Actualizar botones del grupo
+      var tabBarSel = (group === 'paciente')
+        ? '.tab-bar .tab-btn'
+        : '.archivos-tab-bar button';
+
+      document.querySelectorAll(tabBarSel).forEach(function (b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Seleccionar un contacto en la sección de Mensajes
+    ---------------------------------------------------------------- */
+    function selectContact(el, name, preview) {
+      // Marcar el contacto seleccionado
+      document.querySelectorAll('.contact-item').forEach(function (c) {
+        c.classList.remove('selected');
+      });
+      el.classList.add('selected');
+
+      // Cambiar el nombre en el chat header
+      document.getElementById('chat-name').textContent = name;
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Enviar un mensaje en el chat
+    ---------------------------------------------------------------- */
+    function sendMsg() {
+      var input = document.getElementById('chat-input');
+      var text = input.value.trim();
+      if (!text) return;
+
+      var area = document.getElementById('chat-msgs');
+      var bubble = document.createElement('div');
+      bubble.className = 'bubble bubble-out';
+      bubble.innerHTML = text + '<div class="bubble-tick">✓</div>';
+      area.appendChild(bubble);
+      area.scrollTop = area.scrollHeight;  // Scroll automático al fondo
+      input.value = '';
+      input.focus();
+    }
+
+    // Enviar con la tecla Enter
+    document.getElementById('chat-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMsg();
+    });
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Cambiar sub-panel en Ajustes
+    ---------------------------------------------------------------- */
+    function switchSettings(spId, item) {
+      // Ocultar todos los sub-paneles
+      document.querySelectorAll('.sp-pane').forEach(function (p) {
+        p.classList.remove('active');
+      });
+      document.getElementById('sp-' + spId).classList.add('active');
+
+      // Actualizar ítem activo del menú
+      document.querySelectorAll('.settings-item').forEach(function (i) {
+        i.classList.remove('active');
+      });
+      item.classList.add('active');
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Cargar una nota en el editor
+    ---------------------------------------------------------------- */
+    function loadNote(date, title, body) {
+      document.getElementById('note-date-display').textContent = date;
+      document.getElementById('note-title').value = title;
+      document.getElementById('note-body').value = body;
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Crear una nueva nota (limpia el editor)
+    ---------------------------------------------------------------- */
+    function newNote() {
+      var today = new Date().toLocaleDateString('es-MX', {
+        day: '2-digit', month: '2-digit', year: '2-digit'
+      });
+      document.getElementById('note-date-display').textContent = today;
+      document.getElementById('note-title').value = '';
+      document.getElementById('note-body').value = '';
+      document.getElementById('note-title').focus();
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Toggle Dark Mode (placeholder)
+    ---------------------------------------------------------------- */
+    function toggleDark(checkbox) {
+      // Función en desarrollo — se implementará en etapas futuras
+      if (checkbox.checked) {
+        document.body.style.filter = 'brightness(0.85) saturate(0.9)';
+      } else {
+        document.body.style.filter = '';
+      }
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Cerrar sesión
+    ---------------------------------------------------------------- */
+    function logout() {
+      document.getElementById('app').classList.remove('visible');
+      document.getElementById('screen-login').style.display = 'flex';
+      // Resetear navegación al home
+      navigate('home');
+    }
+
+    /* ----------------------------------------------------------------
+       FUNCIÓN: Guardar datos del perfil del paciente
+    ---------------------------------------------------------------- */
+    function savePatientProfile() {
+      // Aquí se enviaría la información a la base de datos.
+      // Por ahora, solo simulamos que se guarda mostrando una alerta
+      // y actualizamos el nombre del paciente en la interfaz si se cambió.
+
+      var nuevoNombre = document.getElementById('p-nombre').value;
+      if (nuevoNombre) {
+        // Actualizar el nombre en la barra superior y en el sidebar de ajustes
+        var nameDisplays = document.querySelectorAll('.patient-name, .sp-name');
+        nameDisplays.forEach(function (el) {
+          el.textContent = nuevoNombre;
+        });
+      }
+
+      alert('¡Información del paciente guardada correctamente!');
+    }
+
+
+  </script>
+</body>
+
+</html>

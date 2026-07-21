@@ -1,3792 +1,666 @@
 <!DOCTYPE html>
+<!--
+  ====================================================================
+  PROYECTO: MONITOREO DINÁMICO INTELIGENTE (MDI)
+  ARCHIVO: index.html
+  DESCRIPCIÓN: Visualización / Sketch de la pantalla principal del cuidador
+  ETAPA: Primera (Jun-Jul-Ago 2026)
+  TECNOLOGÍA: HTML5 + CSS3 puro (sin frameworks ni librerías externas)
+  ====================================================================
+  CÓMO USARLO: Abre este archivo directamente en cualquier navegador
+  (Chrome, Firefox, Edge). No necesitas un servidor web.
+  ====================================================================
+-->
+
+<!-- 'html lang="es"' le dice al navegador que la página está en español -->
 <html lang="es">
 
+<!-- ============================================================ -->
+<!-- HEAD: Todo lo que el navegador necesita saber pero que el    -->
+<!-- usuario NO ve directamente en la pantalla.                   -->
+<!-- ============================================================ -->
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description"
-    content="MDI - Monitoreo Dinámico Inteligente | Panel de escritorio para cuidadores de adultos mayores">
-  <title>MDI - Monitoreo Dinámico Inteligente</title>
-  <style>
-    /* ================================================================
-       VARIABLES DE COLOR — Paleta extraída del diseño móvil original
-       ================================================================ */
-    :root {
-      --teal-darkest: #075E64;
-      /* Fondo del sidebar y elementos activos */
-      --teal-dark: #0D8A92;
-      /* Header, hover, bordes de énfasis      */
-      --teal: #19B5BE;
-      /* Color principal de la marca           */
-      --teal-medium: #3DC8D0;
-      /* Botones, tarjetas de acción           */
-      --teal-light: #6DD5DA;
-      /* Fondos de cards y paneles             */
-      --teal-lighter: #A3E5E8;
-      /* Filas de lista, items                 */
-      --teal-lightest: #D0F3F5;
-      /* Fondo general de la app               */
-      --teal-surface: #E8FAFB;
-      /* Fondo de campos de formulario         */
-      --white: #FFFFFF;
-      --text-dark: #0A3A3D;
-      /* Texto principal oscuro                */
-      --text-medium: #1A6A72;
-      /* Texto secundario                      */
-      --danger: #E53935;
-      /* Rojo para cerrar sesión               */
-      --sidebar-w: 230px;
-      /* Ancho del sidebar izquierdo           */
-      --header-h: 68px;
-      /* Alto del header superior              */
-      --radius: 12px;
-      /* Radio de esquinas estándar            */
-      --radius-sm: 8px;
-      /* Radio pequeño                         */
-      --shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-    }
 
-    /* ================================================================
-       RESET Y BASE
-       ================================================================ */
+  <!-- Define el conjunto de caracteres: permite tildes y la ñ -->
+  <meta charset="UTF-8">
+
+  <!-- Hace que la página se vea bien en celulares y tabletas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Descripción para motores de búsqueda (SEO) -->
+  <meta name="description" content="Aplicación MDI - Monitoreo Dinámico Inteligente para cuidadores de adultos mayores">
+
+  <!-- El título que aparece en la pestaña del navegador -->
+  <title>MDI - Monitoreo Dinámico Inteligente</title>
+
+  <!-- ============================================================ -->
+  <!-- ESTILOS CSS: Aquí definimos el diseño visual de la página.  -->
+  <!-- Todo lo que tiene que ver con colores, tamaños y posiciones. -->
+  <!-- ============================================================ -->
+  <style>
+
+    /* ---------------------------------------------------------------
+       * { } = Se aplica a TODOS los elementos de la página.
+       margin y padding en 0: Elimina los espacios en blanco que los
+       navegadores agregan por defecto.
+       box-sizing: Hace que el ancho de los elementos incluya su borde
+       y relleno interior, lo que facilita calcular tamaños.
+    --------------------------------------------------------------- */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    /* ---------------------------------------------------------------
+       body = El "lienzo" principal de la página.
+       font-family: Define la fuente de texto para toda la página.
+       background: Crea un degradado de color de izquierda a derecha
+       (linear-gradient) usando dos tonos azul-morado.
+       min-height: 100vh = La página ocupará al menos toda la pantalla.
+       display: flex = Activa el modo "Flexbox" para centrar contenido.
+    --------------------------------------------------------------- */
     body {
-      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-      background: var(--teal-lightest);
-      color: var(--text-dark);
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    button {
-      font-family: inherit;
-      cursor: pointer;
-    }
-
-    /* ================================================================
-       PANTALLA DE LOGIN / INICIO
-       ================================================================ */
-    #screen-login {
-      width: 100vw;
-      height: 100vh;
-      background: linear-gradient(150deg, var(--teal-darkest) 0%, var(--teal) 55%, var(--teal-light) 100%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a40 0%, #2c2c6c 100%);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 48px;
+      color: #e0e0f0;
     }
 
-    .login-brand {
-      text-align: center;
-    }
-
-    .login-brand .brand-icon {
-      font-size: 80px;
-      display: block;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
-      margin-bottom: 16px;
-    }
-
-    .login-brand h1 {
-      font-size: 4rem;
-      font-weight: 900;
-      color: var(--teal-lighter);
-      letter-spacing: 6px;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
-
-    .login-brand p {
-      color: var(--teal-lighter);
-      font-size: 0.95rem;
-      letter-spacing: 4px;
-      margin-top: 6px;
-      opacity: 0.85;
-    }
-
-    .btn-iniciar {
-      background: var(--teal-medium);
-      color: var(--white);
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      padding: 16px 72px;
-      border-radius: 50px;
-      font-size: 1.25rem;
-      font-weight: bold;
-      letter-spacing: 3px;
-      transition: all 0.25s;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-    }
-
-    .btn-iniciar:hover {
-      background: var(--teal-light);
-      transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
-    }
-
-    /* ================================================================
-       LAYOUT PRINCIPAL DE LA APP
-       ================================================================ */
-    #app {
-      display: none;
-      /* Se muestra al hacer login */
-      width: 100vw;
-      height: 100vh;
-      flex-direction: row;
-    }
-
-    #app.visible {
+    /* ---------------------------------------------------------------
+       BARRA DE NAVEGACIÓN SUPERIOR (header)
+    --------------------------------------------------------------- */
+    header {
+      /* ancho: ocupa el 100% del ancho de la pantalla */
+      width: 100%;
+      /* Color de fondo semitransparente (rgba = rojo, verde, azul, opacidad) */
+      background: rgba(255, 255, 255, 0.07);
+      /* Línea inferior decorativa */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      /* Espaciado interno (arriba/abajo: 16px, izquierda/derecha: 32px) */
+      padding: 16px 32px;
+      /* Flexbox para poner el logo a la izquierda y el estado a la derecha */
       display: flex;
-    }
-
-    /* ================================================================
-       SIDEBAR IZQUIERDO
-       ================================================================ */
-    .sidebar {
-      width: var(--sidebar-w);
-      height: 100vh;
-      background: var(--teal-darkest);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.2);
-      z-index: 10;
-    }
-
-    /* Logo en la parte superior del sidebar */
-    .sidebar-logo {
-      height: var(--header-h);
-      background: rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 0 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-logo .logo-icon {
-      font-size: 1.8rem;
-    }
-
-    .sidebar-logo .logo-text h2 {
-      color: var(--teal-lighter);
-      font-size: 1.3rem;
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
-
-    .sidebar-logo .logo-text small {
-      color: var(--teal-light);
-      font-size: 0.6rem;
-      letter-spacing: 1.5px;
-      display: block;
-      opacity: 0.8;
-    }
-
-    /* Lista de navegación */
-    .sidebar-nav {
-      flex: 1;
-      padding: 12px 0;
-      overflow-y: auto;
-    }
-
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 13px 20px;
-      cursor: pointer;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.95rem;
-      transition: all 0.15s;
-      border-left: 3px solid transparent;
-      user-select: none;
-    }
-
-    .nav-item:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--white);
-      border-left-color: var(--teal-light);
-    }
-
-    .nav-item.active {
-      background: var(--teal);
-      color: var(--white);
-      font-weight: bold;
-      border-left-color: var(--white);
-    }
-
-    .nav-item .nav-icon {
-      font-size: 1.2rem;
-      min-width: 24px;
-      text-align: center;
-    }
-
-    /* Sección inferior del sidebar (Ajustes) */
-    .sidebar-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 8px 0;
-    }
-
-    /* ================================================================
-       CONTENEDOR DERECHO (Header + Contenido)
-       ================================================================ */
-    .main-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-      min-width: 0;
-    }
-
-    /* ================================================================
-       HEADER SUPERIOR
-       ================================================================ */
-    .top-header {
-      height: var(--header-h);
-      background: var(--teal);
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 0 28px;
-      flex-shrink: 0;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-      z-index: 5;
-    }
-
-    /* Info del paciente en el header */
-    .header-patient {
-      display: flex;
       align-items: center;
-      gap: 14px;
     }
 
-    .patient-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--teal-darkest);
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      color: var(--teal-lighter);
-      flex-shrink: 0;
-    }
-
-    .header-patient .patient-label {
-      color: var(--teal-lightest);
-      font-size: 0.75rem;
-      display: block;
-    }
-
-    .header-patient .patient-name {
-      color: var(--white);
-      font-size: 1rem;
+    /* Nombre/logo del proyecto en el header */
+    .logo {
+      font-size: 1.4rem;  /* Tamaño del texto (1.4 veces el tamaño normal) */
       font-weight: bold;
-      display: block;
+      color: #a78bfa;     /* Color violeta claro */
+      letter-spacing: 1px; /* Espacio extra entre letras */
     }
 
-    /* Botones del header (campana, engranaje) */
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    /* Indicador de estado "Conectado como..." en el header */
+    .user-status {
+      font-size: 0.85rem;
+      color: #94a3b8;   /* Color gris azulado */
+      font-style: italic;
     }
 
-    .header-icon-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: rgba(0, 0, 0, 0.2);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      color: var(--white);
-      cursor: pointer;
-      transition: background 0.15s;
+    /* ---------------------------------------------------------------
+       CONTENEDOR PRINCIPAL: La caja que centra todo el contenido.
+    --------------------------------------------------------------- */
+    .contenedor-principal {
+      width: 100%;
+      max-width: 900px;   /* Nunca será más ancho de 900 píxeles */
+      padding: 30px 20px; /* Espaciado: 30px arriba/abajo, 20px lados */
     }
 
-    .header-icon-btn:hover {
-      background: var(--teal-darkest);
+    /* ---------------------------------------------------------------
+       TÍTULO DE BIENVENIDA
+    --------------------------------------------------------------- */
+    .titulo-bienvenida {
+      text-align: center;
+      margin-bottom: 30px;
     }
 
-    /* ================================================================
-       ÁREA DE CONTENIDO PRINCIPAL
-       ================================================================ */
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 28px;
-      background: var(--teal-lightest);
+    /* El h1 es el título principal de la página (el más importante) */
+    .titulo-bienvenida h1 {
+      font-size: 1.9rem;
+      color: #c4b5fd;  /* Violeta suave */
+      margin-bottom: 6px;
     }
 
-    /* Cada sección se muestra u oculta con JS */
-    .section {
-      display: none;
+    /* El párrafo debajo del título */
+    .titulo-bienvenida p {
+      color: #94a3b8;
+      font-size: 0.95rem;
     }
 
-    .section.active {
-      display: block;
-    }
-
-    /* Título de sección */
-    .section-title {
-      font-size: 1.4rem;
-      font-weight: bold;
-      color: var(--teal-darkest);
-      margin-bottom: 24px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--teal-light);
-    }
-
-    /* Botón de regreso */
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--teal);
-      color: var(--white);
-      border: none;
-      padding: 8px 18px;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      margin-bottom: 16px;
-      transition: background 0.15s;
-    }
-
-    .back-btn:hover {
-      background: var(--teal-dark);
-    }
-
-    /* ================================================================
-       COMPONENTES REUTILIZABLES
-       ================================================================ */
-
-    /* Tarjeta base */
+    /* ---------------------------------------------------------------
+       SECCIÓN 1: FORMULARIO DE REGISTRO SIMULADO
+       Esta "tarjeta" (card) contiene el formulario de registro.
+    --------------------------------------------------------------- */
     .card {
-      background: var(--teal-light);
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
+      /* Color de fondo semitransparente: efecto "cristal" (glassmorphism) */
+      background: rgba(255, 255, 255, 0.06);
+      /* Borde redondeado en las esquinas */
+      border-radius: 16px;
+      /* Borde sutil */
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      /* Sombra difusa alrededor de la caja */
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      padding: 28px;
+      margin-bottom: 24px;
     }
 
-    /* Barra de búsqueda */
-    .search-bar {
+    /* Título de cada sección (h2) */
+    .card h2 {
+      font-size: 1.1rem;
+      color: #a78bfa;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      /* Línea decorativa debajo del título de la sección */
+      border-bottom: 1px solid rgba(167, 139, 250, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;  /* Espacio entre el ícono emoji y el texto */
+    }
+
+    /* ---------------------------------------------------------------
+       ESTILOS DEL FORMULARIO DE REGISTRO
+    --------------------------------------------------------------- */
+
+    /* Grupo de formulario: contiene una etiqueta y su campo de entrada */
+    .form-grupo {
+      margin-bottom: 16px;
+    }
+
+    /* La etiqueta (label) describe para qué es el campo */
+    .form-grupo label {
+      display: block;     /* Hace que la etiqueta ocupe su propia línea */
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    /* El campo de texto donde el usuario escribe */
+    .form-grupo input {
+      width: 100%;         /* Ocupa todo el ancho disponible */
+      padding: 10px 14px;  /* Espaciado interior */
+      border-radius: 8px;
+      /* Borde semitransparente */
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      /* Fondo oscuro semitransparente */
+      background: rgba(255, 255, 255, 0.08);
+      color: #e0e0f0;      /* Color del texto que el usuario escribe */
+      font-size: 0.95rem;
+      /* transition: Hace que el cambio de borde al hacer clic sea suave */
+      transition: border-color 0.2s;
+      outline: none;       /* Quita el borde azul que pone el navegador */
+    }
+
+    /* :focus = Se aplica cuando el usuario hace clic sobre el campo */
+    .form-grupo input:focus {
+      border-color: #a78bfa; /* El borde se vuelve violeta al escribir */
+    }
+
+    /* Fila que pone dos campos de formulario uno al lado del otro */
+    .form-fila {
+      display: flex;
+      gap: 16px; /* Espacio entre los dos campos */
+    }
+
+    /* Cada campo dentro de la fila ocupa el mismo espacio */
+    .form-fila .form-grupo {
+      flex: 1;
+    }
+
+    /* Área del checkbox para aceptar políticas */
+    .politicas-check {
       display: flex;
       align-items: center;
       gap: 10px;
-      background: var(--teal-lighter);
-      border-radius: 50px;
-      padding: 9px 16px;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      cursor: pointer; /* El cursor se convierte en manita */
     }
 
-    .search-bar input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      outline: none;
-      font-size: 0.9rem;
-      color: var(--text-dark);
-    }
-
-    /* Ítem de carpeta */
-    .folder-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      padding: 13px 18px;
-      margin-bottom: 10px;
+    /* El checkbox en sí */
+    .politicas-check input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
       cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
+      accent-color: #a78bfa; /* Color del checkbox cuando está marcado */
     }
 
-    .folder-item:hover {
-      background: var(--teal-light);
-      transform: translateX(4px);
+    /* El enlace "Ver política" dentro del texto del checkbox */
+    .politicas-check a {
+      color: #a78bfa;
+      text-decoration: none; /* Quita el subrayado del enlace */
     }
 
-    /* Placeholder de "pendiente" */
-    .placeholder-bar {
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      height: 40px;
-      margin-bottom: 10px;
-      opacity: 0.55;
-    }
-
-    .pending-chip {
-      text-align: center;
-      padding: 12px;
-      background: var(--teal-medium);
-      border-radius: var(--radius-sm);
-      color: var(--white);
-      font-size: 0.9rem;
-      margin-top: 8px;
-    }
-
-    /* ================================================================
-       SECCIÓN: HOME (INICIO)
-       ================================================================ */
-    .home-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      max-width: 860px;
-    }
-
-    .action-card {
-      background: var(--teal-medium);
-      border-radius: var(--radius);
-      padding: 44px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: var(--shadow);
-      border: 2px solid transparent;
-    }
-
-    .action-card:hover {
-      background: var(--teal-dark);
-      transform: translateY(-5px);
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .action-card .action-icon {
-      font-size: 2.8rem;
-      display: block;
-      margin-bottom: 14px;
-    }
-
-    .action-card h3 {
-      color: var(--white);
-      font-size: 1.3rem;
+    /* ---------------------------------------------------------------
+       BOTONES
+    --------------------------------------------------------------- */
+    .boton {
+      padding: 12px 24px;
+      border: none;          /* Sin borde */
+      border-radius: 8px;
+      font-size: 0.95rem;
       font-weight: bold;
+      cursor: pointer;       /* Cursor de manita al pasar sobre el botón */
+      transition: transform 0.15s, box-shadow 0.15s; /* Animación suave */
       letter-spacing: 0.5px;
     }
 
-    /* ================================================================
-       SECCIÓN: EMERGENCIA
-       ================================================================ */
-    .emergency-header {
-      background: var(--teal-medium);
-      border-radius: var(--radius-sm);
-      padding: 12px 18px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 16px;
-      color: var(--white);
-      font-weight: bold;
-      font-size: 1rem;
+    /* :hover = Estilos que se aplican cuando el ratón pasa sobre el botón */
+    .boton:hover {
+      /* transform: Mueve el botón 2 píxeles hacia arriba (efecto "levitar") */
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
     }
 
-    .emergency-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      padding: 14px 20px;
-      margin-bottom: 10px;
-      transition: background 0.15s;
+    /* Botón principal (violeta) */
+    .boton-primario {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      color: white;
+      width: 100%; /* Ocupa todo el ancho de su contenedor */
     }
 
-    .emergency-row:hover {
-      background: var(--teal-light);
+    /* Botón secundario (transparente con borde) */
+    .boton-secundario {
+      background: transparent;
+      border: 1px solid rgba(167, 139, 250, 0.5);
+      color: #a78bfa;
     }
 
-    .emergency-row .e-name {
-      font-weight: bold;
-      color: var(--teal-darkest);
-      font-size: 0.95rem;
+    /* Botón de "agregar nota" (verde) */
+    .boton-exito {
+      background: linear-gradient(135deg, #059669, #34d399);
+      color: white;
+      width: 100%;
     }
 
-    .emergency-row .e-phone {
-      color: var(--teal-dark);
-      font-size: 1rem;
-      font-weight: 600;
-    }
+    /* ---------------------------------------------------------------
+       SECCIÓN 2: MENÚ VISUAL DEL EXPEDIENTE DEL PACIENTE
+    --------------------------------------------------------------- */
 
-    /* ================================================================
-       SECCIÓN: COMPLETADO
-       ================================================================ */
-    .task-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      padding: 14px 18px;
-      margin-bottom: 10px;
-      transition: background 0.15s;
-    }
-
-    .task-item:hover {
-      background: var(--teal-light);
-    }
-
-    .task-item input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--teal-dark);
-      cursor: pointer;
-    }
-
-    .task-item label {
-      font-size: 1rem;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    /* ================================================================
-       SECCIÓN: MENSAJES / CHAT
-       ================================================================ */
-    .messages-layout {
+    /* Cuadrícula de 2 columnas para las tarjetas del menú */
+    .menu-grid {
       display: grid;
-      grid-template-columns: 300px 1fr;
-      height: 580px;
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    /* Panel izquierdo: lista de contactos */
-    .contacts-panel {
-      background: var(--teal);
-      display: flex;
-      flex-direction: column;
-      border-right: 2px solid var(--teal-dark);
-    }
-
-    .contacts-top-bar {
-      background: var(--teal-dark);
-      padding: 14px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .contacts-top-bar h3 {
-      color: var(--white);
-      font-size: 1rem;
-    }
-
-    /* Fila de avatares de acceso rápido */
-    .quick-avatars {
-      display: flex;
-      gap: 10px;
-      padding: 12px 16px;
-      background: var(--teal-medium);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .avatar-sm {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: var(--teal-darkest);
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: var(--teal-lighter);
-      cursor: pointer;
-      transition: border-color 0.15s;
-    }
-
-    .avatar-sm:hover {
-      border-color: var(--white);
-    }
-
-    /* Ítem de conversación */
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 16px;
-      cursor: pointer;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      transition: background 0.15s;
-    }
-
-    .contact-item:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-
-    .contact-item.selected {
-      background: var(--teal-dark);
-    }
-
-    .contact-item .c-avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: var(--teal-darkest);
-      border: 2px solid rgba(255, 255, 255, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.95rem;
-      font-weight: bold;
-      color: var(--teal-lighter);
-      flex-shrink: 0;
-    }
-
-    .contact-item .c-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .contact-item .c-info strong {
-      color: var(--white);
-      display: block;
-      font-size: 0.95rem;
-    }
-
-    .contact-item .c-info span {
-      color: rgba(255, 255, 255, 0.65);
-      font-size: 0.8rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
-    }
-
-    .contact-item .c-time {
-      color: rgba(255, 255, 255, 0.55);
-      font-size: 0.75rem;
-      flex-shrink: 0;
-    }
-
-    /* Panel derecho: ventana de chat */
-    .chat-panel {
-      background: var(--teal-lightest);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-header-bar {
-      background: var(--teal-medium);
-      padding: 12px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .chat-header-bar strong {
-      color: var(--white);
-      font-size: 1rem;
-    }
-
-    .chat-messages-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    /* Burbujas de mensaje */
-    .bubble {
-      max-width: 58%;
-      padding: 10px 16px;
-      border-radius: 18px;
-      font-size: 0.9rem;
-      line-height: 1.5;
-    }
-
-    .bubble-in {
-      background: var(--teal-light);
-      color: var(--text-dark);
-      align-self: flex-start;
-      border-bottom-left-radius: 4px;
-    }
-
-    .bubble-out {
-      background: var(--teal-dark);
-      color: var(--white);
-      align-self: flex-end;
-      border-bottom-right-radius: 4px;
-    }
-
-    .bubble-tick {
-      font-size: 0.72rem;
-      opacity: 0.7;
-      text-align: right;
+      /* 'repeat(2, 1fr)' = 2 columnas que se reparten el espacio iguales */
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;       /* Espacio entre tarjetas */
       margin-top: 4px;
     }
 
-    /* Barra de escritura del chat */
-    .chat-input-row {
-      padding: 14px 20px;
-      background: var(--teal-surface);
-      border-top: 1px solid var(--teal-lighter);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .chat-input-row input {
-      flex: 1;
-      padding: 10px 18px;
-      border-radius: 50px;
-      border: 1px solid var(--teal-light);
-      background: var(--white);
-      font-size: 0.9rem;
-      outline: none;
-      font-family: inherit;
-      transition: border-color 0.15s;
-    }
-
-    .chat-input-row input:focus {
-      border-color: var(--teal);
-    }
-
-    .send-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: var(--teal-dark);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      color: var(--white);
-      transition: background 0.15s, transform 0.1s;
-    }
-
-    .send-btn:hover {
-      background: var(--teal-darkest);
-      transform: scale(1.1);
-    }
-
-    /* ================================================================
-       SECCIÓN: CALENDARIO
-       ================================================================ */
-    .calendar-layout {
-      display: grid;
-      grid-template-columns: 1fr 310px;
-      gap: 24px;
-      align-items: start;
-    }
-
-    .calendar-card {
-      background: var(--teal-light);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    /* Cabecera del calendario (mes + flechas) */
-    .cal-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .cal-top h3 {
-      font-size: 1.15rem;
-      color: var(--teal-darkest);
-      letter-spacing: 1px;
-    }
-
-    .cal-arrow {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: var(--teal);
-      border: none;
-      color: var(--white);
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-
-    .cal-arrow:hover {
-      background: var(--teal-dark);
-    }
-
-    /* Cuadrícula de días */
-    .cal-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      margin-bottom: 6px;
-    }
-
-    .cal-weekdays span {
-      font-size: 0.78rem;
-      font-weight: bold;
-      color: var(--teal-dark);
-      padding: 4px 0;
-    }
-
-    .cal-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 3px;
-    }
-
-    .cal-day {
-      text-align: center;
-      padding: 9px 4px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-size: 0.88rem;
-      transition: background 0.15s;
-      color: var(--text-dark);
-    }
-
-    .cal-day:hover:not(.empty) {
-      background: var(--teal-medium);
-      color: var(--white);
-    }
-
-    .cal-day.empty {
-      cursor: default;
-      pointer-events: none;
-    }
-
-    .cal-day.today {
-      background: var(--teal-dark);
-      color: var(--white);
-      font-weight: bold;
-    }
-
-    .cal-day.event {
-      background: var(--teal-medium);
-      color: var(--white);
-      font-weight: bold;
-      position: relative;
-    }
-
-    .cal-day.event::after {
-      content: '•';
-      position: absolute;
-      bottom: 2px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.6rem;
-    }
-
-    /* Panel lateral: eventos pendientes */
-    .pending-panel {
-      background: var(--teal-light);
-      border-radius: var(--radius);
+    /* Cada tarjeta individual del menú de expediente */
+    .menu-item {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .pending-panel h3 {
-      color: var(--teal-darkest);
-      margin-bottom: 16px;
-      font-size: 1rem;
-    }
-
-    .event-item {
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      margin-bottom: 10px;
-      border-left: 4px solid var(--teal-dark);
+      text-align: center;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
     }
 
-    .event-item:hover {
-      background: var(--teal-medium);
-      color: var(--white);
+    /* Efecto al pasar el ratón sobre una tarjeta del menú */
+    .menu-item:hover {
+      background: rgba(167, 139, 250, 0.1);
+      border-color: rgba(167, 139, 250, 0.4);
+      transform: translateY(-3px); /* Sube 3 píxeles */
     }
 
-    .event-item .ev-date {
-      font-size: 0.78rem;
+    /* El emoji grande dentro de cada tarjeta de menú */
+    .menu-item .icono {
+      font-size: 2.2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    /* El título de cada tarjeta de menú */
+    .menu-item .menu-titulo {
+      font-size: 0.9rem;
       font-weight: bold;
-      color: var(--teal-darkest);
+      color: #c4b5fd;
       margin-bottom: 4px;
     }
 
-    .event-item:hover .ev-date {
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .event-item .ev-text {
-      font-size: 0.88rem;
-    }
-
-    /* ================================================================
-       SECCIÓN: PACIENTE
-       ================================================================ */
-    .paciente-header-card {
-      background: var(--teal);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .big-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: var(--teal-dark);
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      color: var(--teal-lighter);
-      flex-shrink: 0;
-    }
-
-    .paciente-header-card .ph-label {
-      color: rgba(255, 255, 255, 0.7);
+    /* La descripción pequeña debajo del título */
+    .menu-item .menu-desc {
       font-size: 0.78rem;
-      display: block;
+      color: #64748b;
     }
 
-    .paciente-header-card .ph-name {
-      color: var(--white);
-      font-size: 1.3rem;
-      font-weight: bold;
-      display: block;
-    }
+    /* ---------------------------------------------------------------
+       SECCIÓN 3: FORMULARIO DE AGREGAR NOTA A LA BITÁCORA
+    --------------------------------------------------------------- */
 
-    /* Tabs del paciente */
-    .tab-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    .tab-btn {
-      padding: 10px 22px;
-      border-radius: var(--radius-sm);
-      border: 2px solid var(--teal-light);
-      background: transparent;
-      color: var(--teal-dark);
-      font-size: 0.92rem;
-      font-weight: 600;
-      transition: all 0.15s;
-    }
-
-    .tab-btn.active,
-    .tab-btn:hover {
-      background: var(--teal);
-      color: var(--white);
-      border-color: var(--teal);
-    }
-
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.active {
-      display: block;
-    }
-
-    .section-subheader {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      color: var(--teal-darkest);
-      font-weight: bold;
-    }
-
-    /* ================================================================
-       SECCIÓN: NOTAS
-       ================================================================ */
-    .notes-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    .notes-list-panel {
-      background: var(--teal-light);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .new-note-btn {
-      background: var(--teal-medium);
-      color: var(--white);
-      border: none;
-      padding: 10px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      font-weight: bold;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.15s;
-    }
-
-    .new-note-btn:hover {
-      background: var(--teal-dark);
-    }
-
-    .note-item {
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      padding: 13px 16px;
-      margin-bottom: 10px;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.15s;
-    }
-
-    .note-item:hover {
-      background: var(--teal-medium);
-      color: var(--white);
-    }
-
-    .note-item .n-date {
-      font-size: 0.78rem;
-      font-weight: bold;
-      color: var(--teal-dark);
-      margin-bottom: 3px;
-    }
-
-    .note-item:hover .n-date {
-      color: rgba(255, 255, 255, 0.75);
-    }
-
-    .note-item .n-text {
-      font-size: 0.85rem;
-    }
-
-    .note-item .n-opts {
-      color: var(--teal-dark);
-      font-size: 1.1rem;
-    }
-
-    /* Editor de notas */
-    .note-editor-panel {
-      background: var(--teal-light);
-      border-radius: var(--radius);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: var(--shadow);
-    }
-
-    .note-date-header {
-      background: var(--teal-medium);
-      border-radius: var(--radius-sm);
-      padding: 10px 16px;
-    }
-
-    .note-date-header strong {
-      color: var(--white);
-      font-size: 0.95rem;
-    }
-
-    .note-title-input {
+    /* Selector de categoría de la nota */
+    .form-grupo select {
       width: 100%;
-      background: var(--teal-medium);
-      border: none;
-      border-radius: var(--radius-sm);
       padding: 10px 14px;
-      color: var(--white);
-      font-size: 1rem;
-      font-weight: bold;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: #e0e0f0;
+      font-size: 0.95rem;
       outline: none;
-      font-family: inherit;
-    }
-
-    .note-title-input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    .note-body-area {
-      flex: 1;
-      background: var(--teal-lightest);
-      border: 1px solid var(--teal-light);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      resize: none;
-      outline: none;
-      min-height: 200px;
-      font-family: inherit;
-      color: var(--text-dark);
-      transition: border-color 0.15s;
-    }
-
-    .note-body-area:focus {
-      border-color: var(--teal);
-    }
-
-    /* ================================================================
-       SECCIÓN: ARCHIVOS
-       ================================================================ */
-    .archivos-tab-bar {
-      display: flex;
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .archivos-tab-bar button {
-      flex: 1;
-      padding: 13px;
-      border: none;
-      background: var(--teal-light);
-      color: var(--teal-dark);
-      font-size: 0.9rem;
-      font-weight: bold;
-      transition: all 0.15s;
-    }
-
-    .archivos-tab-bar button.active,
-    .archivos-tab-bar button:hover {
-      background: var(--teal);
-      color: var(--white);
-    }
-
-    .folder-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--teal-lighter);
-      border-radius: var(--radius-sm);
-      padding: 13px 18px;
-      margin-bottom: 10px;
       cursor: pointer;
-      transition: background 0.15s;
     }
 
-    .folder-row:hover {
-      background: var(--teal-light);
+    /* Área de texto grande para escribir la nota */
+    .form-grupo textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+      color: #e0e0f0;
+      font-size: 0.95rem;
+      resize: vertical; /* Solo permite cambiar la altura, no el ancho */
+      outline: none;
+      font-family: inherit; /* Usa la misma fuente que el resto de la página */
+      transition: border-color 0.2s;
     }
 
-    .folder-row .fr-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .form-grupo textarea:focus {
+      border-color: #a78bfa;
     }
 
-    .folder-row .fr-opts {
-      color: var(--teal-dark);
-      font-size: 1.1rem;
-    }
-
-    /* ================================================================
-       SECCIÓN: AJUSTES
-       ================================================================ */
-    .settings-layout {
-      display: grid;
-      grid-template-columns: 290px 1fr;
-      gap: 24px;
-      align-items: start;
-    }
-
-    /* Columna izquierda: menú de ajustes */
-    .settings-menu {
-      background: var(--teal-light);
-      border-radius: var(--radius);
-      overflow: hidden;
-      box-shadow: var(--shadow);
-    }
-
-    /* Perfil del paciente dentro del menú de ajustes */
-    .settings-profile {
-      background: var(--teal);
-      padding: 22px 16px;
+    /* ---------------------------------------------------------------
+       INDICADOR DE ESTADO / NOTIFICACIÓN DE ÉXITO (oculta por defecto)
+    --------------------------------------------------------------- */
+    .notificacion {
+      display: none; /* Oculta por defecto. JavaScript la mostrará. */
+      background: rgba(5, 150, 105, 0.2);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #34d399;
+      font-size: 0.9rem;
+      margin-top: 12px;
       text-align: center;
     }
 
-    .settings-avatar {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      background: var(--teal-dark);
-      border: 3px solid rgba(255, 255, 255, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.9rem;
-      color: var(--teal-lighter);
-      margin: 0 auto 10px;
-    }
-
-    .settings-profile .sp-label {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 0.75rem;
-      display: block;
-    }
-
-    .settings-profile .sp-name {
-      color: var(--white);
-      font-weight: bold;
-      font-size: 1rem;
-      display: block;
-    }
-
-    /* Ítems del menú de ajustes */
-    .settings-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      transition: background 0.15s;
-      color: var(--text-dark);
-    }
-
-    .settings-item:hover {
-      background: rgba(0, 0, 0, 0.06);
-    }
-
-    .settings-item.active {
-      background: var(--teal);
-      color: var(--white);
-      font-weight: bold;
-    }
-
-    .settings-item.danger {
-      color: var(--danger);
-    }
-
-    .settings-item.danger.active {
-      background: var(--danger);
-      color: var(--white);
-    }
-
-    .si-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.9rem;
-    }
-
-    /* Columna derecha: panel de detalle del ajuste seleccionado */
-    .settings-detail {
-      background: var(--teal-light);
-      border-radius: var(--radius);
-      padding: 26px;
-      box-shadow: var(--shadow);
-    }
-
-    .sp-pane {
-      display: none;
-    }
-
-    .sp-pane.active {
-      display: block;
-    }
-
-    .sp-pane h3 {
-      font-size: 1.1rem;
-      color: var(--teal-darkest);
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--teal-lighter);
-    }
-
-    /* Formulario de ajustes */
-    .form-field {
-      margin-bottom: 16px;
-    }
-
-    .form-field label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: bold;
-      color: var(--teal-dark);
-      margin-bottom: 6px;
-    }
-
-    .form-field input,
-    .form-field select {
-      width: 100%;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--teal-lighter);
-      background: var(--teal-surface);
-      font-size: 0.9rem;
-      outline: none;
-      font-family: inherit;
-      transition: border-color 0.15s;
-    }
-
-    .form-field input:focus {
-      border-color: var(--teal);
-    }
-
-    /* Toggle para dark mode */
-    .toggle-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--teal-lighter);
-      padding: 14px 18px;
-      border-radius: var(--radius-sm);
-      margin-bottom: 10px;
-    }
-
-    .switch-wrap {
-      position: relative;
-      width: 50px;
-      height: 26px;
-    }
-
-    .switch-wrap input {
-      display: none;
-    }
-
-    .slider-pill {
-      position: absolute;
-      inset: 0;
-      background: var(--teal-light);
-      border-radius: 13px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .slider-pill::before {
-      content: "";
-      position: absolute;
-      width: 20px;
-      height: 20px;
-      left: 3px;
-      top: 3px;
-      background: var(--white);
-      border-radius: 50%;
-      transition: transform 0.2s;
-    }
-
-    .switch-wrap input:checked+.slider-pill {
-      background: var(--teal-dark);
-    }
-
-    .switch-wrap input:checked+.slider-pill::before {
-      transform: translateX(24px);
-    }
-
-    /* Botón de cerrar sesión */
-    .logout-zone {
-      text-align: center;
-      padding: 36px 20px 20px;
-    }
-
-    .logout-zone p {
-      color: var(--text-medium);
-      margin-bottom: 22px;
-      font-size: 0.95rem;
-    }
-
-    .btn-logout {
-      background: var(--danger);
-      color: var(--white);
-      border: none;
-      padding: 12px 40px;
-      border-radius: var(--radius-sm);
-      font-size: 1rem;
-      font-weight: bold;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
-    }
-
-    .btn-logout:hover {
-      background: #c62828;
-      transform: translateY(-2px);
-    }
-
-    /* ================================================================
-       SCROLLBAR PERSONALIZADA
-       ================================================================ */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--teal-light);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--teal);
-    }
-
-    /* ================================================================
-       MODAL DE TÉRMINOS Y NUEVO REGISTRO
-       ================================================================ */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(7, 94, 100, 0.8); /* --teal-darkest */
-      backdrop-filter: blur(5px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+    /* ---------------------------------------------------------------
+       PIE DE PÁGINA (footer)
+    --------------------------------------------------------------- */
+    footer {
+      margin-top: auto; /* Empuja el footer hasta el fondo de la página */
       padding: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #475569;
     }
-    .modal-overlay.active {
-      display: flex;
-    }
-    .modal-content {
-      background: var(--teal-lightest);
-      border-radius: var(--radius);
-      padding: 32px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: var(--shadow);
-      color: var(--text-dark);
-      animation: modalScale 0.3s ease;
-    }
-    @keyframes modalScale {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    .modal-title {
-      font-size: 1.4rem;
-      color: var(--teal-darkest);
-      margin-bottom: 16px;
-      border-bottom: 2px solid var(--teal-light);
-      padding-bottom: 12px;
-    }
-    .modal-body {
-      font-size: 0.95rem;
-      line-height: 1.6;
-      margin-bottom: 24px;
-      max-height: 250px;
-      overflow-y: auto;
-      padding-right: 8px;
-    }
-    .checkbox-group {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 24px;
-      cursor: pointer;
-      background: var(--teal-lighter);
-      padding: 16px;
-      border-radius: var(--radius-sm);
-    }
-    .checkbox-group input {
-      margin-top: 4px;
-      width: 18px;
-      height: 18px;
-      accent-color: var(--teal-dark);
-      cursor: pointer;
-    }
-    .checkbox-group label {
-      font-size: 0.9rem;
-      color: var(--text-dark);
-      cursor: pointer;
-      line-height: 1.4;
-    }
-    .btn-disabled {
-      background: #94a3b8 !important;
-      cursor: not-allowed !important;
-      transform: none !important;
-      box-shadow: none !important;
-      color: #cbd5e1 !important;
-      border: 3px solid #94a3b8 !important;
-    }
+
   </style>
-  <!-- Cargar librería QRCode.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- FIN DE LOS ESTILOS CSS -->
+
 </head>
 
+<!-- ============================================================ -->
+<!-- BODY: Todo lo que el usuario SÍ ve en la pantalla.           -->
+<!-- ============================================================ -->
 <body>
 
-  <!-- ================================================================ -->
-  <!-- PANTALLA DE LOGIN                                                 -->
-  <!-- ================================================================ -->
-  <div id="screen-login">
-    <div class="login-brand">
-      <span class="brand-icon">🏥</span>
-      <h1>MDI</h1>
-      <p>HEALTH &amp; MONITORING</p>
-    </div>
-    <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
-      <button class="btn-iniciar" onclick="openApp()" style="width: 100%; max-width: 320px;">INICIAR SESIÓN</button>
-      <button class="btn-iniciar" onclick="showRoles()"
-        style="background: transparent; color: var(--teal-lighter); border: 2px solid var(--teal-lighter); font-size: 1rem; padding: 12px 40px; box-shadow: none; width: 100%; max-width: 320px;">REGISTRARSE</button>
-    </div>
-  </div>
+  <!-- ============================================================ -->
+  <!-- BARRA SUPERIOR (HEADER)                                      -->
+  <!-- ============================================================ -->
+  <header>
+    <!-- Logo del proyecto -->
+    <span class="logo">🩺 MDI</span>
+    <!-- Estado del usuario (simulado) -->
+    <span class="user-status">Sketch - Primera Etapa | Jun 2026</span>
+  </header>
 
-  <!-- ================================================================ -->
-  <!-- PANTALLA DE SELECCIÓN DE ROL                                      -->
-  <!-- ================================================================ -->
-  <div id="screen-roles"
-    style="display:none; width: 100vw; height: 100vh; background: linear-gradient(150deg, var(--teal-darkest) 0%, var(--teal) 55%, var(--teal-light) 100%); flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
-    <button onclick="showLogin()"
-      style="background: none; border: none; color: var(--teal-lighter); font-size: 1rem; cursor: pointer; position: absolute; top: 30px; left: 30px; font-weight: bold;">
-      ← Volver al inicio
-    </button>
-    <div class="login-brand">
-      <h2 style="color: var(--teal-lighter); font-size: 2.2rem; margin-bottom: 5px;">¿Quién eres?</h2>
-      <p>Selecciona tu perfil para continuar con el registro</p>
-    </div>
-    <div style="display:flex; flex-direction:column; gap:16px; align-items:center; width: 100%; max-width: 320px;">
-      <button class="btn-iniciar" onclick="showFormulario('Tutor')"
-        style="background: var(--teal-light); color: var(--teal-darkest); border: none; font-size: 1.1rem; padding: 16px; width: 100%;">
-        👨‍🏫 Soy Tutor
-      </button>
-      <button class="btn-iniciar" onclick="showFormulario('Cuidador')"
-        style="background: var(--teal-light); color: var(--teal-darkest); border: none; font-size: 1.1rem; padding: 16px; width: 100%;">
-        🧑‍⚕️ Soy Cuidador
-      </button>
-    </div>
-  </div>
+  <!-- ============================================================ -->
+  <!-- CONTENIDO PRINCIPAL                                          -->
+  <!-- ============================================================ -->
+  <main class="contenedor-principal">
 
-  <!-- ================================================================ -->
-  <!-- PANTALLA DE REGISTRO                                              -->
-  <!-- ================================================================ -->
-  <div id="screen-formulario"
-    style="display:none; width: 100vw; height: 100vh; background: linear-gradient(150deg, var(--teal-darkest) 0%, var(--teal) 55%, var(--teal-light) 100%); flex-direction: column; align-items: center; justify-content: center; gap: 24px;">
-    <button onclick="showRoles()"
-      style="background: none; border: none; color: var(--teal-lighter); font-size: 1rem; cursor: pointer; position: absolute; top: 30px; left: 30px; font-weight: bold;">
-      ← Cambiar rol
-    </button>
-    <div class="login-brand">
-      <h2 style="color: var(--teal-lighter); font-size: 2.2rem; margin-bottom: 5px;">Registro</h2>
-      <p id="form-subtitle" style="color: var(--teal-lighter); opacity: 0.9;">Creando cuenta...</p>
+    <!-- ---- Título de bienvenida ---- -->
+    <div class="titulo-bienvenida">
+      <!-- h1: El título más importante de la página (solo debe haber uno) -->
+      <h1>Monitoreo Dinámico Inteligente</h1>
+      <p>Panel del Cuidador — Sketch Visual de Primera Etapa</p>
     </div>
-    <div
-      style="background: var(--teal-light); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); width: 100%; max-width: 600px;">
-      <form id="form-registro-unificado" onsubmit="mostrarModalTerminos(event)">
-        <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-          <div style="flex: 1;">
-            <label
-              style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Nombre Completo</label>
-            <input type="text" id="reg-nombre" placeholder="Ej: Juan Pérez" required
-              style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+
+
+    <!-- ============================================================ -->
+    <!-- TARJETA 1: FORMULARIO DE REGISTRO DEL CUIDADOR              -->
+    <!-- ============================================================ -->
+    <!-- 'id="seccion-registro"': Un identificador único para esta sección.
+         Útil para navegar o para que JavaScript encuentre este elemento. -->
+    <section class="card" id="seccion-registro">
+
+      <!-- Título de la sección -->
+      <h2>📋 Registro de Nuevo Cuidador</h2>
+
+      <!-- 'action="#"' y 'onsubmit="return false;"' evitan que la página
+           recargue al dar clic en el botón, ya que es solo un sketch. -->
+      <form id="form-registro" onsubmit="return mostrarExito('notif-registro')">
+
+        <!-- Fila con dos campos lado a lado: Nombre y Teléfono -->
+        <div class="form-fila">
+          <div class="form-grupo">
+            <!-- 'label for="nombre"' asocia la etiqueta con el campo 'id="nombre"' -->
+            <label for="nombre">Nombre Completo</label>
+            <!-- 'placeholder' muestra un texto de ayuda dentro del campo -->
+            <input type="text" id="nombre" placeholder="Ej: María González" required>
           </div>
-          <div style="flex: 1;">
-            <label
-              style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Teléfono</label>
-            <input type="tel" id="reg-telefono" placeholder="Ej: 555-0123" required
-              style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+          <div class="form-grupo">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" placeholder="Ej: 555-0123">
           </div>
         </div>
-        <div style="margin-bottom: 16px;">
-          <label
-            style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Correo Electrónico</label>
-          <input type="email" id="reg-correo" placeholder="Ej: correo@ejemplo.com" required
-            style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+
+        <!-- Campo de correo electrónico -->
+        <div class="form-grupo">
+          <label for="correo">Correo Electrónico</label>
+          <!-- 'type="email"' valida automáticamente que sea un correo válido -->
+          <input type="email" id="correo" placeholder="Ej: maria@correo.com" required>
         </div>
-        <div style="margin-bottom: 24px;">
-          <label
-            style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Contraseña</label>
-          <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" required
-            style="width: 100%; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; font-family: inherit;">
+
+        <!-- Campo de contraseña -->
+        <div class="form-grupo">
+          <label for="contrasena">Contraseña</label>
+          <!-- 'type="password"' oculta el texto con asteriscos -->
+          <input type="password" id="contrasena" placeholder="Mínimo 8 caracteres" required>
         </div>
-        
-        <button type="submit" class="btn-iniciar"
-          style="width: 100%; font-size: 1.1rem; padding: 14px; border-radius: 8px;">Continuar</button>
+
+        <!-- Checkbox para aceptar políticas de privacidad -->
+        <label class="politicas-check">
+          <input type="checkbox" id="acepta-politicas" required>
+          He leído y acepto la
+          <a href="../01_Documentacion/politica_privacidad.txt" target="_blank">
+            Política de Privacidad y Deslinde Legal
+          </a>
+        </label>
+
+        <!-- Botón para enviar el formulario -->
+        <button type="submit" class="boton boton-primario" id="btn-registrarse">
+          ✅ Crear Mi Cuenta de Cuidador
+        </button>
+
+        <!-- Notificación que aparece al "registrarse" (simulado) -->
+        <div class="notificacion" id="notif-registro">
+          ¡Registro exitoso! Bienvenida al sistema MDI.
+        </div>
+
       </form>
-    </div>
-  </div>
+    </section>
 
-  <!-- ================================================================ -->
-  <!-- MODAL DE TÉRMINOS Y CONDICIONES                                   -->
-  <!-- ================================================================ -->
-  <div id="modal-terminos" class="modal-overlay">
-    <div class="modal-content">
-      <h3 class="modal-title">Términos y Condiciones</h3>
-      <div class="modal-body">
-        <p>Al utilizar la aplicación <strong>Monitoreo Dinámico Inteligente (MDI)</strong>, aceptas los siguientes
-          términos:</p>
-        <br>
-        <p><strong>1. Privacidad y Seguridad:</strong> Toda la información médica y personal registrada en la plataforma
-          es estrictamente confidencial y se almacena de forma segura.</p>
-        <br>
-        <p><strong>2. Uso de la Herramienta:</strong> Esta plataforma es una herramienta de asistencia tecnológica para
-          el monitoreo de pacientes y <strong>no sustituye</strong> el criterio, diagnóstico ni tratamiento de un médico
-          profesional certificado.</p>
-        <br>
-        <p><strong>3. Responsabilidad del Usuario:</strong> Al registrarte, te comprometes a ingresar información veraz,
-          precisa y actualizada sobre el paciente a tu cuidado.</p>
+
+    <!-- ============================================================ -->
+    <!-- TARJETA 2: MENÚ VISUAL - EXPEDIENTE DEL PACIENTE            -->
+    <!-- ============================================================ -->
+    <section class="card" id="seccion-expediente">
+
+      <h2>👤 Expediente del Paciente</h2>
+
+      <!-- Cuadrícula con 4 opciones del menú del expediente -->
+      <div class="menu-grid">
+
+        <!-- Opción 1: Ver datos generales del paciente -->
+        <div class="menu-item" id="menu-datos" onclick="alert('Función: Ver Datos Generales del Paciente\n\n(En desarrollo para la siguiente etapa)')">
+          <span class="icono">🧓</span>
+          <div class="menu-titulo">Datos Generales</div>
+          <div class="menu-desc">Nombre, edad, diagnóstico principal</div>
+        </div>
+
+        <!-- Opción 2: Ver historial de la bitácora -->
+        <div class="menu-item" id="menu-historial" onclick="alert('Función: Ver Historial de Bitácora\n\n(En desarrollo para la siguiente etapa)')">
+          <span class="icono">📅</span>
+          <div class="menu-titulo">Historial de Notas</div>
+          <div class="menu-desc">Registros y observaciones previas</div>
+        </div>
+
+        <!-- Opción 3: Ver datos biométricos del paciente -->
+        <div class="menu-item" id="menu-biometricos" onclick="alert('Función: Ver Datos Biométricos\n\n(En desarrollo para la siguiente etapa)')">
+          <span class="icono">📊</span>
+          <div class="menu-titulo">Datos Biométricos</div>
+          <div class="menu-desc">Presión, temperatura, glucosa</div>
+        </div>
+
+        <!-- Opción 4: Ver contactos de emergencia -->
+        <div class="menu-item" id="menu-emergencia" onclick="alert('Función: Ver Contacto de Emergencia\n\n(En desarrollo para la siguiente etapa)')">
+          <span class="icono">🚨</span>
+          <div class="menu-titulo">Emergencias</div>
+          <div class="menu-desc">Contacto familiar y médico</div>
+        </div>
+
       </div>
-
-      <div class="checkbox-group" onclick="toggleCheckbox(event)">
-        <input type="checkbox" id="check-terminos" onchange="validarAceptacion(event)">
-        <label for="check-terminos">He leído y acepto los Términos y Condiciones de Uso, así como la Política de Privacidad y Deslinde Legal.</label>
-      </div>
-
-      <button id="btn-finalizar" class="btn-iniciar" style="width: 100%; padding: 14px; border-radius: 8px; margin-bottom: 12px; font-size: 1rem;" disabled onclick="finalizarRegistro()">
-        Completar Registro
-      </button>
-      <button class="btn-iniciar" style="width: 100%; padding: 14px; border-radius: 8px; background: transparent; color: var(--teal-darkest); border: 2px solid var(--teal-darkest); box-shadow: none; font-size: 1rem;" onclick="cerrarModal()">
-        Cancelar y Revisar Datos
-      </button>
-    </div>
-  </div>
+    </section>
 
 
-  <!-- ================================================================ -->
-  <!-- APLICACIÓN PRINCIPAL                                              -->
-  <!-- ================================================================ -->
-  <div id="app">
+    <!-- ============================================================ -->
+    <!-- TARJETA 3: FORMULARIO PARA AGREGAR NOTA A LA BITÁCORA       -->
+    <!-- ============================================================ -->
+    <section class="card" id="seccion-bitacora">
 
-    <!-- ======================== SIDEBAR ======================== -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <span class="logo-icon">🏥</span>
-        <div class="logo-text">
-          <h2>MDI</h2>
-          <small>HEALTH &amp; MONITORING</small>
-        </div>
-      </div>
+      <h2>📝 Agregar Nota a la Bitácora</h2>
 
-      <nav class="sidebar-nav">
-        <div class="nav-item active" id="nav-home" onclick="navigate('home')">
-          <span class="nav-icon">🏠</span><span>Inicio</span>
-        </div>
-        <div class="nav-item" id="nav-mensajes" onclick="navigate('mensajes')">
-          <span class="nav-icon">💬</span><span>Mensajes</span>
-        </div>
-        <div class="nav-item" id="nav-calendario" onclick="navigate('calendario')">
-          <span class="nav-icon">📅</span><span>Calendario</span>
-        </div>
-        <div class="nav-item" id="nav-paciente" onclick="navigate('paciente')">
-          <span class="nav-icon">👤</span><span>Paciente</span>
-        </div>
-        <div class="nav-item" id="nav-notas" onclick="navigate('notas')">
-          <span class="nav-icon">📝</span><span>Notas</span>
-        </div>
-        <div class="nav-item" id="nav-archivos" onclick="navigate('archivos')">
-          <span class="nav-icon">📁</span><span>Archivos</span>
-        </div>
-      </nav>
+      <form id="form-bitacora" onsubmit="return mostrarExito('notif-bitacora')">
 
-      <div class="sidebar-footer">
-        <div class="nav-item" id="nav-ajustes" onclick="navigate('ajustes')">
-          <span class="nav-icon">⚙️</span><span>Ajustes</span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- ======================== MAIN WRAPPER ======================== -->
-    <div class="main-wrapper">
-
-      <!-- HEADER SUPERIOR -->
-      <header class="top-header">
-        <div class="header-patient">
-          <div class="patient-avatar">👤</div>
-          <div>
-            <span class="patient-label">Paciente</span>
-            <span class="patient-name">Juan Pérez</span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button class="header-icon-btn" title="Notificaciones" id="btn-notif">🔔</button>
-          <button class="header-icon-btn" title="Ajustes" id="btn-settings-hdr"
-            onclick="navigate('ajustes')">⚙️</button>
-        </div>
-      </header>
-
-      <!-- CONTENIDO -->
-      <main class="content-area">
-
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: INICIO (HOME)                                    -->
-        <!-- ======================================================== -->
-        <div id="section-home" class="section active">
-          <h2 class="section-title">🏠 Inicio</h2>
-          <div class="home-grid">
-
-            <div class="action-card" id="card-emergencia" onclick="navigate('emergencia')">
-              <span class="action-icon">🚨</span>
-              <h3>Emergencia</h3>
-            </div>
-
-            <div class="action-card" id="card-recordatorio" onclick="navigate('recordatorio')">
-              <span class="action-icon">⏰</span>
-              <h3>Recordatorio</h3>
-            </div>
-
-            <div class="action-card" id="card-completado" onclick="navigate('completado')">
-              <span class="action-icon">✅</span>
-              <h3>Completado</h3>
-            </div>
-
-          </div>
+        <!-- Selector de categoría -->
+        <div class="form-grupo">
+          <label for="categoria">Categoría de la Nota</label>
+          <!-- 'select' crea un menú desplegable de opciones -->
+          <select id="categoria">
+            <!-- Cada 'option' es una opción del menú -->
+            <option value="SALUD">🩺 Salud General</option>
+            <option value="COMIDA">🍽️ Alimentación</option>
+            <option value="RUTINA">🌅 Rutina Diaria</option>
+            <option value="BIOMETRICO">📊 Datos Biométricos</option>
+          </select>
         </div>
 
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: EMERGENCIA                                       -->
-        <!-- ======================================================== -->
-        <div id="section-emergencia" class="section">
-          <button class="back-btn" onclick="navigate('home')">← Regresar</button>
-          <h2 class="section-title">🚨 Emergencia</h2>
-          <div class="card" style="max-width:580px;">
-            <div class="emergency-header">↩️ Emergencia</div>
-            <p style="font-weight:bold; margin-bottom:12px; font-size:0.88rem; color:var(--teal-dark);">Números de
-              emergencia</p>
-            <div class="emergency-row">
-              <span class="e-name">Felipe</span>
-              <span class="e-phone">📞 9991854672</span>
-            </div>
-            <div class="emergency-row">
-              <span class="e-name">Mariana</span>
-              <span class="e-phone">📞 9996854691</span>
-            </div>
-            <div class="emergency-row">
-              <span class="e-name">Irene</span>
-              <span class="e-phone">📞 9997854621</span>
-            </div>
-          </div>
+        <!-- Campo de fecha del registro -->
+        <div class="form-grupo">
+          <label for="fecha-nota">Fecha del Registro</label>
+          <!-- 'type="date"' muestra un calendario para elegir la fecha -->
+          <input type="date" id="fecha-nota">
         </div>
 
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: RECORDATORIO                                     -->
-        <!-- ======================================================== -->
-        <div id="section-recordatorio" class="section">
-          <button class="back-btn" onclick="navigate('home')">← Regresar</button>
-          <h2 class="section-title">⏰ Recordatorio</h2>
-          <div class="card" style="max-width:580px;">
-            <div class="placeholder-bar"></div>
-            <div class="placeholder-bar"></div>
-            <div class="placeholder-bar"></div>
-            <div class="pending-chip">Función en desarrollo — pendiente</div>
-          </div>
+        <!-- Área de texto para escribir la nota -->
+        <div class="form-grupo">
+          <label for="nota">Descripción / Observación</label>
+          <!-- 'textarea' es un campo de texto grande y expandible.
+               'rows="4"' define que muestre 4 líneas de altura por defecto. -->
+          <textarea
+            id="nota"
+            rows="4"
+            placeholder="Escribe aquí tu observación del día... Ej: El paciente desayunó avena con fruta. Se mostró animado durante la mañana."
+            required>
+          </textarea>
         </div>
 
+        <!-- Botón para guardar la nota -->
+        <button type="submit" class="boton boton-exito" id="btn-guardar-nota">
+          💾 Guardar Nota en la Bitácora
+        </button>
 
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: COMPLETADO                                       -->
-        <!-- ======================================================== -->
-        <div id="section-completado" class="section">
-          <button class="back-btn" onclick="navigate('home')">← Regresar</button>
-          <h2 class="section-title">✅ Completado</h2>
-          <div class="card" style="max-width:480px;">
-            <div
-              style="background:var(--teal-medium);border-radius:var(--radius-sm);padding:10px 16px;text-align:center;margin-bottom:16px;">
-              <strong style="color:white;font-size:1rem;">Completado</strong>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;color:var(--teal-darkest);">
-              <span>↩️</span><strong>Tareas completadas</strong>
-            </div>
-            <div class="task-item">
-              <input type="checkbox" id="t-comida" checked>
-              <label for="t-comida">🍽️ Comida</label>
-            </div>
-            <div class="task-item">
-              <input type="checkbox" id="t-bano" checked>
-              <label for="t-bano">🛁 Baño</label>
-            </div>
-            <div class="task-item">
-              <input type="checkbox" id="t-med" checked>
-              <label for="t-med">💊 Medicación</label>
-            </div>
-          </div>
+        <!-- Notificación de éxito al guardar la nota (simulado) -->
+        <div class="notificacion" id="notif-bitacora">
+          ¡Nota guardada correctamente en la bitácora!
         </div>
 
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: MENSAJES                                         -->
-        <!-- ======================================================== -->
-        <div id="section-mensajes" class="section" style="padding: 0; overflow: hidden; height: calc(100vh - var(--header-h));">
-
-          <div style="display: flex; height: 100%; overflow: hidden;">
-
-            <!-- ── Columna izquierda: Lista de contactos ── -->
-            <div id="chat-sidebar" style="width: 300px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--teal-light); border-right: 1px solid var(--teal-lighter); height: 100%;">
-
-              <!-- Header de contactos -->
-              <div style="padding: 16px; background: var(--teal-dark); color: white; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;">
-                <h3 style="margin: 0; font-size: 1.05rem;">💬 Mensajes</h3>
-                <button id="btn-nuevo-chat" onclick="abrirNuevoChat()" title="Nuevo chat" style="background: rgba(255,255,255,0.2); border: none; color: white; border-radius: 50%; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center;">✏️</button>
-              </div>
-
-              <!-- Búsqueda de contactos -->
-              <div style="padding: 10px 14px; flex-shrink: 0; background: var(--teal-lightest);">
-                <input type="text" id="chat-buscar-contacto" placeholder="🔍 Buscar o iniciar chat..." oninput="filtrarContactos()"
-                  style="width: 100%; padding: 8px 12px; border-radius: 20px; border: none; background: white; outline: none; font-size: 0.88rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08);">
-              </div>
-
-              <!-- Lista de contactos -->
-              <div id="chat-lista-contactos" style="flex: 1; overflow-y: auto;">
-                <!-- Renderizado por JS -->
-              </div>
-            </div>
-
-            <!-- ── Columna derecha: Área de conversación ── -->
-            <div style="flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden;">
-
-              <!-- Estado inicial: ningún chat seleccionado -->
-              <div id="chat-empty-state" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--teal-dark); background: var(--teal-surface);">
-                <div style="font-size: 4rem; margin-bottom: 16px; opacity: 0.5;">💬</div>
-                <h3 style="margin: 0 0 8px; opacity: 0.6;">Selecciona una conversación</h3>
-                <p style="opacity: 0.4; font-size: 0.9rem;">o inicia un nuevo chat</p>
-              </div>
-
-              <!-- Área de chat activo -->
-              <div id="chat-activo" style="display: none; flex: 1; flex-direction: column; overflow: hidden; background: var(--teal-surface);">
-
-                <!-- Header del chat -->
-                <div style="display: flex; align-items: center; gap: 12px; padding: 12px 18px; background: var(--teal-dark); color: white; flex-shrink: 0;">
-                  <div id="ca-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--teal-medium); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; color: white; border: 2px solid rgba(255,255,255,0.4); flex-shrink: 0;">F</div>
-                  <div style="flex: 1;">
-                    <div id="ca-nombre" style="font-weight: bold; font-size: 1rem;">Felipe</div>
-                    <div id="ca-estado" style="font-size: 0.75rem; opacity: 0.8;">en línea</div>
-                  </div>
-                  <!-- Tabs: Chat / Actividad -->
-                  <div style="display: flex; gap: 4px;">
-                    <button id="tab-btn-chat" onclick="switchChatTab('chat')" style="padding: 5px 14px; border-radius: 20px; border: none; background: white; color: var(--teal-darkest); font-size: 0.82rem; font-weight: bold; cursor: pointer;">💬 Chat</button>
-                    <button id="tab-btn-actividad" onclick="switchChatTab('actividad')" style="padding: 5px 14px; border-radius: 20px; border: none; background: rgba(255,255,255,0.2); color: white; font-size: 0.82rem; cursor: pointer;">📋 Actividad</button>
-                  </div>
-                </div>
-
-                <!-- TAB: Mensajes -->
-                <div id="chat-tab-chat" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-                  <!-- Área de burbujas -->
-                  <div id="chat-bubbles" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--teal-lightest);">
-                    <!-- Renderizado por JS -->
-                  </div>
-
-                  <!-- Vista previa de adjunto -->
-                  <div id="chat-preview-adjunto" style="display: none; padding: 8px 16px; background: var(--teal-surface); border-top: 1px solid var(--teal-lighter); align-items: center; gap: 10px; flex-shrink: 0;">
-                    <img id="chat-preview-img" src="" alt="adjunto" style="height: 48px; border-radius: 6px; object-fit: cover;">
-                    <span id="chat-preview-nombre" style="font-size: 0.82rem; color: var(--teal-dark); flex: 1;"></span>
-                    <button onclick="cancelarAdjunto()" style="background: none; border: none; color: var(--danger); font-size: 1.1rem; cursor: pointer;">✕</button>
-                  </div>
-
-                  <!-- Barra de entrada -->
-                  <div style="padding: 10px 14px; background: var(--teal-light); border-top: 1px solid var(--teal-lighter); display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0;">
-                    <!-- Adjuntar imagen -->
-                    <button onclick="document.getElementById('chat-file-input').click()" title="Adjuntar imagen"
-                      style="background: var(--teal-surface); border: none; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; flex-shrink: 0; color: var(--teal-darkest);">🖼️</button>
-                    <input type="file" id="chat-file-input" accept="image/*" style="display:none" onchange="adjuntarImagen(this)">
-
-                    <!-- Grabar audio -->
-                    <button id="btn-grabar" onclick="toggleGrabacion()" title="Grabar audio"
-                      style="background: var(--teal-surface); border: none; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; flex-shrink: 0; color: var(--teal-darkest); transition: background 0.2s;">🎙️</button>
-
-                    <!-- Input de texto -->
-                    <textarea id="chat-input-text" placeholder="Escribe un mensaje..." rows="1"
-                      style="flex: 1; padding: 9px 14px; border-radius: 20px; border: none; background: white; outline: none; font-size: 0.93rem; resize: none; max-height: 100px; overflow-y: auto; font-family: inherit; box-shadow: 0 1px 4px rgba(0,0,0,0.08);"
-                      oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"
-                      onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); enviarMensaje();}"></textarea>
-
-                    <!-- Enviar -->
-                    <button onclick="enviarMensaje()" title="Enviar"
-                      style="background: var(--teal-dark); border: none; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; flex-shrink: 0; color: white; box-shadow: var(--shadow);">➤</button>
-                  </div>
-                </div>
-
-                <!-- TAB: Actividad -->
-                <div id="chat-tab-actividad" style="display: none; flex: 1; overflow-y: auto; padding: 20px; background: var(--teal-surface);">
-                  <h4 style="color: var(--teal-darkest); margin: 0 0 16px; border-bottom: 2px solid var(--teal-light); padding-bottom: 10px;">📋 Historial de Actividad</h4>
-                  <div id="chat-actividad-lista" style="display: flex; flex-direction: column; gap: 10px;">
-                    <!-- Renderizado por JS -->
-                  </div>
-                  <div id="chat-actividad-vacio" style="display: none; text-align: center; padding: 40px; opacity: 0.5;">
-                    <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
-                    <p>Sin actividad registrada aún.</p>
-                  </div>
-                </div>
-
-              </div><!-- fin chat-activo -->
-
-            </div><!-- fin columna derecha -->
-          </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: CALENDARIO                                       -->
-        <!-- ======================================================== -->
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: CALENDARIO                                       -->
-        <!-- ======================================================== -->
-        <div id="section-calendario" class="section">
-          <h2 class="section-title">📅 Calendario y Recordatorios</h2>
-          <div class="calendar-layout" style="display: flex; gap: 24px; flex-wrap: wrap;">
-            
-            <!-- Izquierda: Calendario y Reloj -->
-            <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 24px;">
-              <!-- Cuadrícula del mes -->
-              <div class="calendar-card" style="background: var(--teal-light); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);">
-                <div class="cal-top" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; color: var(--teal-darkest);">
-                  <button class="cal-arrow" id="cal-prev" style="background:none; border:none; font-size: 1.5rem; cursor:pointer; color: var(--teal-darkest);">&#8249;</button>
-                  <h3 style="margin: 0;">Julio 2026</h3>
-                  <button class="cal-arrow" id="cal-next" style="background:none; border:none; font-size: 1.5rem; cursor:pointer; color: var(--teal-darkest);">&#8250;</button>
-                </div>
-                <div class="cal-weekdays" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.8rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 8px;">
-                  <span>LUN</span><span>MAR</span><span>MIÉ</span>
-                  <span>JUE</span><span>VIE</span><span>SÁB</span><span>DOM</span>
-                </div>
-                <div class="cal-days" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; gap: 4px;">
-                  <!-- Julio 2026: empieza el miércoles (col 3) -->
-                  <div class="cal-day empty" style="padding: 8px;"></div>
-                  <div class="cal-day empty" style="padding: 8px;"></div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">1</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">2</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">3</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">4</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">5</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">6</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">7</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">8</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">9</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">10</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">11</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">12</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">13</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">14</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">15</div>
-                  <div class="cal-day event" title="Cita con el doctor Ramírez" style="padding: 8px; cursor: pointer; border-radius: 4px; background: var(--danger); color: white; font-weight: bold;">16</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">17</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">18</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">19</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">20</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">21</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">22</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">23</div>
-                  <div class="cal-day event" title="Día de rehabilitación" style="padding: 8px; cursor: pointer; border-radius: 4px; background: #eab308; color: white; font-weight: bold;">24</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">25</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">26</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">27</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">28</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">29</div>
-                  <div class="cal-day today" style="padding: 8px; cursor: pointer; border-radius: 4px; background: var(--teal-dark); color: white; font-weight: bold;">30</div>
-                  <div class="cal-day" style="padding: 8px; cursor: pointer; border-radius: 4px;">31</div>
-                  <div class="cal-day empty" style="padding: 8px;"></div>
-                  <div class="cal-day empty" style="padding: 8px;"></div>
-                </div>
-              </div>
-              
-              <!-- Pendientes (Resumen bajo el calendario) -->
-              <div class="pending-panel" id="lista-pendientes" style="background: var(--teal-surface); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);">
-                <h3 style="color: var(--teal-darkest); margin-top: 0; margin-bottom: 12px; border-bottom: 2px solid var(--teal-light); padding-bottom: 8px;">📋 Próximos Pendientes</h3>
-                <div class="event-item" style="display: flex; gap: 12px; margin-bottom: 12px; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid var(--danger);">
-                  <div class="ev-date" style="font-weight: bold; color: var(--teal-dark); min-width: 70px;">16/07/26</div>
-                  <div class="ev-text" style="color: var(--text-dark);">Cita pendiente con el doctor Ramírez</div>
-                </div>
-                <div class="event-item" style="display: flex; gap: 12px; margin-bottom: 12px; padding: 12px; background: white; border-radius: 8px; border-left: 4px solid #eab308;">
-                  <div class="ev-date" style="font-weight: bold; color: var(--teal-dark); min-width: 70px;">24/07/26</div>
-                  <div class="ev-text" style="color: var(--text-dark);">Día de rehabilitación en la institución</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Derecha: Reloj y Formulario -->
-            <div style="flex: 1.2; min-width: 300px; display: flex; flex-direction: column; gap: 24px;">
-              <!-- Configuración de Nuevo Recordatorio -->
-              <div style="background: var(--teal-lightest); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); border: 1px solid var(--teal-light);">
-                <h3 style="color: var(--teal-darkest); margin-top: 0; border-bottom: 2px solid var(--teal-light); padding-bottom: 8px; margin-bottom: 20px;">⏰ Configurar Recordatorio</h3>
-                
-                <form id="form-recordatorio" onsubmit="event.preventDefault(); guardarRecordatorio();">
-                  
-                  <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 0.9rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Título de la actividad</label>
-                    <input type="text" id="rec-titulo" placeholder="Ej. Tomar Metformina" required style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--teal); background: white; outline: none; font-size: 1rem;">
-                  </div>
-
-                  <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-                    <div style="flex: 1;">
-                      <label style="display: block; font-size: 0.9rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Fecha</label>
-                      <input type="date" id="rec-fecha" required style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--teal); background: white; outline: none;">
-                    </div>
-                    <div style="flex: 1;">
-                      <!-- Reloj (Time picker) -->
-                      <label style="display: block; font-size: 0.9rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Horario</label>
-                      <input type="time" id="rec-hora" required style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--teal); background: white; outline: none;">
-                    </div>
-                  </div>
-
-                  <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 0.9rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Tipo de actividad (Color)</label>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                      <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                        <input type="radio" name="rec-color" value="#22c55e" checked style="accent-color: #22c55e;">
-                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #22c55e;"></span> Medicamentos (Verde)
-                      </label>
-                      <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                        <input type="radio" name="rec-color" value="var(--danger)" style="accent-color: var(--danger);">
-                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--danger);"></span> Citas (Rojo)
-                      </label>
-                      <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                        <input type="radio" name="rec-color" value="#eab308" style="accent-color: #eab308);">
-                        <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #eab308;"></span> Extra (Amarillo)
-                      </label>
-                    </div>
-                  </div>
-
-                  <div style="margin-bottom: 24px;">
-                    <label style="display: block; font-size: 0.9rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Frecuencia / Repetición</label>
-                    <select id="rec-frecuencia" style="width: 100%; padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--teal); background: white; outline: none;">
-                      <option value="una">Una sola vez</option>
-                      <option value="diario">Todos los días</option>
-                      <option value="personalizado">Repetir (personalizado)...</option>
-                    </select>
-                  </div>
-
-                  <div style="background: var(--teal-surface); padding: 12px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal); margin-bottom: 24px;">
-                    <strong style="color: var(--teal-dark); font-size: 0.85rem;">🔔 Notificación Inteligente</strong>
-                    <p style="margin: 4px 0 0; font-size: 0.85rem; color: var(--text-dark);">El sistema programará una alerta exactamente <strong>10 minutos antes</strong> de la hora agendada.</p>
-                  </div>
-
-                  <div style="display: flex; justify-content: flex-end;">
-                    <button type="submit" class="btn-iniciar" style="padding: 12px 24px; border-radius: var(--radius-sm); font-size: 1rem; width: 100%;">Guardar Recordatorio</button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: PACIENTE                                         -->
-        <!-- ======================================================== -->
-        <div id="section-paciente" class="section">
-          <h2 class="section-title">👤 Perfil del Paciente</h2>
-
-          <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px;">
-            <!-- Contenedor Foto y QR -->
-            <div style="flex: 1; min-width: 250px; background: var(--teal-light); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 16px;">
-              <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: white; overflow: hidden; border: 4px solid var(--teal-surface);">
-                👤
-              </div>
-              <h3 style="color: var(--teal-darkest); margin: 0;" id="p-display-name">Juan Pérez</h3>
-              <p style="color: var(--teal-dark); margin: 0; font-size: 0.9rem;">Paciente Principal</p>
-              
-              <hr style="width: 100%; border: none; border-top: 1px solid rgba(0,0,0,0.1); margin: 8px 0;">
-              
-              <div style="text-align: center;">
-                <p style="font-size: 0.85rem; color: var(--teal-dark); font-weight: bold; margin-bottom: 8px;">QR de Emergencia</p>
-                <div style="background: white; padding: 8px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" id="qrcode">
-                  <!-- qrcode.js renderizará aquí -->
-                </div>
-              </div>
-            </div>
-
-            <!-- Formulario de Datos -->
-            <div style="flex: 2; min-width: 300px; background: var(--teal-light); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow);">
-              
-              <!-- Barra de tabs interna para datos y archivos -->
-              <div class="tab-bar" style="margin-bottom: 20px;">
-                <button class="tab-btn active" id="ptab-general" onclick="switchTab('paciente', 'general', this)">📋 Datos Generales</button>
-                <button class="tab-btn" id="ptab-archivos" onclick="switchTab('paciente', 'archivos', this)">📁 Archivos</button>
-              </div>
-              
-              <!-- TAB: Datos Generales -->
-              <div id="ptab-pane-general" class="tab-pane active">
-                <form id="form-paciente-perfil" onsubmit="event.preventDefault(); generarResumenQR(); alert('Perfil actualizado y QR regenerado');">
-                  
-                  <h4 style="color: var(--teal-darkest); border-bottom: 1px solid var(--teal-lighter); padding-bottom: 8px; margin-bottom: 16px;">Información Básica</h4>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Nombre Completo</label>
-                      <input type="text" id="p-nombre-gen" value="Juan Pérez" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Edad</label>
-                      <input type="number" id="p-edad" value="68" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Fecha de Nacimiento</label>
-                      <input type="date" id="p-fecha" value="1958-05-14" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Género</label>
-                      <select id="p-genero" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                        <option selected>Masculino</option>
-                        <option>Femenino</option>
-                        <option>Otro</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Seguro Social</label>
-                      <input type="text" id="p-ss" value="IMSS-123456789" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                  </div>
-
-                  <h4 style="color: var(--teal-darkest); border-bottom: 1px solid var(--teal-lighter); padding-bottom: 8px; margin-bottom: 16px;">Información Médica</h4>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Tipo de Sangre</label>
-                      <select id="p-sangre" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                        <option selected>O+</option>
-                        <option>O-</option>
-                        <option>A+</option>
-                        <option>A-</option>
-                        <option>B+</option>
-                        <option>B-</option>
-                        <option>AB+</option>
-                        <option>AB-</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Alergias</label>
-                      <input type="text" id="p-alergias" value="Penicilina, Nueces" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Condición Médica</label>
-                      <textarea id="p-condicion" rows="2" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; resize: vertical;">Hipertensión arterial, Diabetes Tipo 2</textarea>
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Medicamentos Actuales</label>
-                      <textarea id="p-medicamentos" rows="2" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none; resize: vertical;">Metformina 500mg, Losartán 50mg</textarea>
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Dispositivos Médicos</label>
-                      <input type="text" id="p-dispositivos" value="Marcapasos, Glucómetro" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                  </div>
-
-                  <h4 style="color: var(--teal-darkest); border-bottom: 1px solid var(--teal-lighter); padding-bottom: 8px; margin-bottom: 16px;">Contacto de Emergencia</h4>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Nombre del Contacto</label>
-                      <input type="text" id="p-contacto-nombre" value="María Pérez" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                    <div>
-                      <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Teléfono</label>
-                      <input type="tel" id="p-contacto-tel" value="555-987-6543" style="width: 100%; padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--teal-lighter); background: var(--teal-surface); outline: none;">
-                    </div>
-                  </div>
-
-                  <div style="display: flex; justify-content: flex-end; gap: 16px;">
-                    <button type="button" style="padding: 10px 20px; border-radius: var(--radius-sm); border: 2px solid var(--teal); background: transparent; color: var(--teal-darkest); font-weight: bold; cursor: pointer;">Cancelar</button>
-                    <button type="submit" class="btn-iniciar" style="padding: 10px 24px; border-radius: var(--radius-sm); font-size: 1rem;">Guardar Cambios</button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- TAB: Archivos -->
-              <div id="ptab-pane-archivos" class="tab-pane">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                  <h4 style="color: var(--teal-darkest); margin: 0;">Documentos Adjuntos</h4>
-                  <button type="button" class="btn-iniciar" onclick="navigate('archivos'); document.getElementById('input-subir-archivo').click();" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 4px;">+ Subir Archivo</button>
-                </div>
-                <div class="folder-item" style="background: var(--teal-surface); margin-bottom: 8px;"><span>📄</span><span>Historial_Clinico_2026.pdf</span></div>
-                <div class="folder-item" style="background: var(--teal-surface); margin-bottom: 8px;"><span>🖼️</span><span>Radiografia_Torax.png</span></div>
-                <div class="folder-item" style="background: var(--teal-surface); margin-bottom: 8px;"><span>📄</span><span>Receta_Metformina.pdf</span></div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: RESUMEN DE EMERGENCIA (VISTA OCULTA)             -->
-        <!-- ======================================================== -->
-        <div id="view-resumen-emergencia" style="display: none; position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--teal-lightest); z-index: 9999; padding: 24px; box-sizing: border-box; overflow-y: auto;">
-          <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow);">
-            <div style="text-align: center; margin-bottom: 24px; border-bottom: 2px solid var(--teal-light); padding-bottom: 16px;">
-              <div style="font-size: 3rem; margin-bottom: 8px;">🚨</div>
-              <h1 style="color: var(--teal-darkest); margin: 0; font-size: 2rem;">Resumen de Emergencia</h1>
-              <p style="color: var(--teal-dark); margin-top: 8px;">Datos médicos vitales escaneados vía QR</p>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 16px;">
-              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Nombre del Paciente</strong>
-                <span id="re-nombre" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
-              </div>
-              
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                  <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Tipo de Sangre</strong>
-                  <span id="re-sangre" style="font-size: 1.1rem; color: var(--danger); font-weight: bold;">--</span>
-                </div>
-                <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                  <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Edad</strong>
-                  <span id="re-edad" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
-                </div>
-              </div>
-
-              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Datos generales</strong>
-                <span id="re-detalles" style="font-size: 1rem; color: var(--text-dark);">--</span>
-              </div>
-
-              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Alergias</strong>
-                <span id="re-alergias" style="font-size: 1.1rem; color: var(--danger); font-weight: bold;">--</span>
-              </div>
-
-              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Condición Médica</strong>
-                <span id="re-condicion" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
-              </div>
-
-              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Medicamentos Actuales</strong>
-                <span id="re-medicamentos" style="font-size: 1.1rem; color: var(--text-dark);">--</span>
-              </div>
-
-              <div style="background: var(--teal-surface); padding: 16px; border-radius: var(--radius-sm); border-left: 4px solid var(--teal);">
-                <strong style="color: var(--teal-dark); display: block; font-size: 0.9rem;">Contacto de Emergencia</strong>
-                <div style="font-size: 1.1rem; color: var(--text-dark);">
-                  <span id="re-contacto-nombre">--</span> <br>
-                  <strong style="color: var(--teal-dark);">📞 <span id="re-contacto-tel">--</span></strong>
-                </div>
-              </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: 32px;">
-              <button onclick="cerrarResumenEmergencia()" class="btn-iniciar" style="padding: 12px 24px; font-size: 1rem; border-radius: var(--radius-sm);">Volver a la App</button>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: NOTAS                                            -->
-        <!-- ======================================================== -->
-        <div id="section-notas" class="section">
-          <h2 class="section-title">📝 Bloque de Notas</h2>
-
-          <!-- Barra superior: búsqueda y botón agregar -->
-          <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 24px; flex-wrap: wrap;">
-            <div style="flex: 1; min-width: 200px; position: relative;">
-              <input type="text" id="notas-search" placeholder="🔍 Buscar por título o fecha..." oninput="filtrarNotas()"
-                style="width: 100%; padding: 10px 16px; border-radius: var(--radius-sm); border: 1px solid var(--teal); background: white; outline: none; font-size: 0.95rem; box-sizing: border-box;">
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <label style="font-size: 0.85rem; font-weight: bold; color: var(--teal-dark);">Ordenar por:</label>
-              <select id="notas-orden" onchange="renderNotas()" style="padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--teal); background: white; outline: none; color: var(--teal-darkest); font-size: 0.9rem;">
-                <option value="fecha">📅 Fecha</option>
-                <option value="titulo">🔤 Título</option>
-              </select>
-            </div>
-            <button onclick="abrirModalNota()" style="padding: 10px 20px; background: var(--teal-dark); color: white; border: none; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: bold; cursor: pointer; white-space: nowrap; box-shadow: var(--shadow);">
-              + Agregar Nota
-            </button>
-          </div>
-
-          <!-- Lista de notas agrupadas -->
-          <div id="notas-container" style="display: flex; flex-direction: column; gap: 16px;">
-            <!-- Se rellena dinámicamente por JS -->
-          </div>
-
-          <!-- Estado vacío -->
-          <div id="notas-vacio" style="display: none; text-align: center; padding: 60px 20px; color: var(--teal-dark);">
-            <div style="font-size: 3rem; margin-bottom: 12px;">📋</div>
-            <h3 style="margin: 0 0 8px; color: var(--teal-darkest);">Sin notas aún</h3>
-            <p style="margin: 0; opacity: 0.7;">Haz clic en "+ Agregar Nota" para comenzar.</p>
-          </div>
-
-        </div>
-
-        <!-- ======================================================== -->
-        <!-- MODAL: Agregar / Editar Nota                              -->
-        <!-- ======================================================== -->
-        <div id="modal-nota" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 10000; align-items: center; justify-content: center;">
-          <div style="background: white; border-radius: var(--radius); padding: 32px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); margin: 16px;">
-            <h3 id="modal-nota-titulo" style="margin: 0 0 24px; color: var(--teal-darkest); border-bottom: 2px solid var(--teal-light); padding-bottom: 12px;">✏️ Nueva Nota</h3>
-
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Título *</label>
-              <input type="text" id="modal-nota-campo-titulo" placeholder="Ej. Tomar medicamento" required
-                style="width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal); outline: none; font-size: 1rem; box-sizing: border-box;">
-            </div>
-
-            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
-              <div style="flex: 1;">
-                <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Fecha *</label>
-                <input type="date" id="modal-nota-fecha" required
-                  style="width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal); outline: none; box-sizing: border-box;">
-              </div>
-              <div style="flex: 1;">
-                <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Hora *</label>
-                <input type="time" id="modal-nota-hora" required
-                  style="width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal); outline: none; box-sizing: border-box;">
-              </div>
-            </div>
-
-            <div style="margin-bottom: 24px;">
-              <label style="display: block; font-size: 0.85rem; font-weight: bold; color: var(--teal-dark); margin-bottom: 6px;">Contenido</label>
-              <textarea id="modal-nota-contenido" rows="4" placeholder="Escribe aquí los detalles de la nota..."
-                style="width: 100%; padding: 11px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal); outline: none; font-size: 0.95rem; resize: vertical; box-sizing: border-box;"></textarea>
-            </div>
-
-            <div style="display: flex; gap: 12px; justify-content: flex-end;">
-              <button onclick="cerrarModalNota()" style="padding: 10px 20px; background: var(--teal-surface); color: var(--teal-darkest); border: 1px solid var(--teal-light); border-radius: var(--radius-sm); cursor: pointer; font-size: 0.95rem;">Cancelar</button>
-              <button onclick="guardarNota()" style="padding: 10px 24px; background: var(--teal-dark); color: white; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.95rem; font-weight: bold;">Guardar Nota</button>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: ARCHIVOS                                         -->
-        <!-- ======================================================== -->
-        <div id="section-archivos" class="section">
-          <h2 class="section-title">📁 Gestor de Archivos</h2>
-
-          <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-
-            <!-- ── Sidebar árbol de categorías ── -->
-            <div style="width: 220px; flex-shrink: 0;">
-              <div style="background: var(--teal-light); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow);">
-                <p style="font-size: 0.75rem; font-weight: bold; color: var(--teal-dark); text-transform: uppercase; letter-spacing: 1px; margin: 0 0 12px;">Categorías</p>
-
-                <!-- Imágenes (raíz expandible) -->
-                <div id="arbol-imagenes">
-                  <div onclick="toggleArbol('sub-imagenes', this)"
-                    style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; cursor: pointer; background: var(--teal-surface); margin-bottom: 4px; font-weight: bold; color: var(--teal-darkest); user-select: none;">
-                    <span id="ico-imagenes" style="font-size: 0.7rem; transition: transform 0.2s;">▶</span>
-                    <span>🖼️ Imágenes</span>
-                  </div>
-
-                  <!-- Subcategorías -->
-                  <div id="sub-imagenes" style="display: none; padding-left: 16px; margin-bottom: 4px; display: flex; flex-direction: column; gap: 2px;">
-                    <div class="arbol-item active" id="arbol-acta" onclick="seleccionarCategoria('imagenes/acta', this)"
-                      style="display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--teal-darkest);">
-                      🗂️ Acta
-                    </div>
-                    <div class="arbol-item" id="arbol-documentos" onclick="seleccionarCategoria('imagenes/documentos', this)"
-                      style="display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--teal-darkest);">
-                      📄 Documentos
-                    </div>
-                    <div class="arbol-item" id="arbol-recetas" onclick="seleccionarCategoria('imagenes/recetas', this)"
-                      style="display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 6px; cursor: pointer; color: var(--teal-darkest);">
-                      💊 Recetas
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              <!-- Botón subir -->
-              <button onclick="document.getElementById('input-subir-archivo').click()"
-                style="width: 100%; margin-top: 16px; padding: 11px; background: var(--teal-dark); color: white; border: none; border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: bold; cursor: pointer; box-shadow: var(--shadow);">
-                ⬆️ Cargar archivo
-              </button>
-              <input type="file" id="input-subir-archivo" accept=".png,.jpg,.jpeg,.pdf" multiple style="display:none" onchange="recibirArchivos(this)">
-              <p style="font-size: 0.75rem; color: var(--teal-dark); text-align: center; margin: 8px 0 0; opacity: 0.75;">PNG, JPG, PDF admitidos</p>
-            </div>
-
-            <!-- ── Panel principal de archivos ── -->
-            <div style="flex: 1; min-width: 280px;">
-
-              <!-- Barra de ruta + búsqueda -->
-              <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
-                <div style="flex: 1; display: flex; align-items: center; gap: 8px; background: var(--teal-surface); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 0.85rem; color: var(--teal-dark);">
-                  <span>📁</span>
-                  <span id="af-ruta" style="font-weight: bold; color: var(--teal-darkest);">Imágenes / Acta</span>
-                </div>
-                <input type="text" id="af-buscar" placeholder="🔍 Buscar archivos..." oninput="filtrarArchivos()"
-                  style="padding: 9px 14px; border-radius: var(--radius-sm); border: 1px solid var(--teal); outline: none; font-size: 0.9rem; min-width: 180px;">
-                <select id="af-filtro-ext" onchange="filtrarArchivos()"
-                  style="padding: 9px 12px; border-radius: var(--radius-sm); border: 1px solid var(--teal); outline: none; font-size: 0.9rem; background: white;">
-                  <option value="">Todos</option>
-                  <option value="png">.png</option>
-                  <option value="jpg">.jpg</option>
-                  <option value="pdf">.pdf</option>
-                </select>
-              </div>
-
-              <!-- Grid de archivos -->
-              <div id="af-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px;">
-                <!-- Renderizado por JS -->
-              </div>
-
-              <!-- Estado vacío -->
-              <div id="af-vacio" style="display: none; text-align: center; padding: 50px 20px; color: var(--teal-dark);">
-                <div style="font-size: 3rem; margin-bottom: 12px;">📂</div>
-                <p style="margin: 0; opacity: 0.7;">Esta carpeta está vacía.<br>Usa "Cargar archivo" para agregar.</p>
-              </div>
-
-            </div><!-- fin panel principal -->
-          </div><!-- fin flex -->
-
-        </div>
-
-        <!-- ── Modal: previsualización de imagen ── -->
-        <div id="modal-preview" onclick="cerrarPreview()"
-          style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 10001; align-items: center; justify-content: center; padding: 24px;">
-          <div onclick="event.stopPropagation()" style="background: white; border-radius: var(--radius); padding: 16px; max-width: 90vw; max-height: 90vh; overflow: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.4); text-align: center;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span id="preview-nombre" style="font-weight: bold; color: var(--teal-darkest); font-size: 1rem;"></span>
-              <button onclick="cerrarPreview()" style="background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--teal-dark);">✕</button>
-            </div>
-            <img id="preview-img" src="" alt="Vista previa" style="max-width: 100%; max-height: 70vh; border-radius: 8px; display: block; margin: 0 auto;">
-            <p id="preview-pdf-msg" style="display:none; color: var(--teal-dark); padding: 20px;">Vista previa no disponible para PDF. Descarga el archivo para visualizarlo.</p>
-            <div style="margin-top: 14px;">
-              <a id="preview-descargar" href="#" download style="padding: 8px 20px; background: var(--teal-dark); color: white; border-radius: 6px; text-decoration: none; font-size: 0.9rem;">⬇️ Descargar</a>
-            </div>
-          </div>
-        </div>
-
-
-        <!-- ======================================================== -->
-        <!-- SECCIÓN: AJUSTES                                          -->
-        <!-- ======================================================== -->
-        <div id="section-ajustes" class="section">
-          <h2 class="section-title">⚙️ Ajustes</h2>
-          <div class="settings-layout">
-
-            <!-- Menú lateral de ajustes -->
-            <div class="settings-menu">
-              <div class="settings-profile">
-                <div class="settings-avatar">👤</div>
-                <span class="sp-label">Paciente</span>
-                <span class="sp-name">Juan Pérez</span>
-              </div>
-              <div class="settings-item active" id="sitem-perfil" onclick="switchSettings('perfil',this)">
-                <div class="si-left">👤 Detalles del perfil</div><span>›</span>
-              </div>
-              <div class="settings-item" id="sitem-seguridad" onclick="switchSettings('seguridad',this)">
-                <div class="si-left">🔒 Seguridad</div><span>›</span>
-              </div>
-              <div class="settings-item" id="sitem-noti" onclick="switchSettings('noti',this)">
-                <div class="si-left">🔔 Notificaciones</div><span>›</span>
-              </div>
-              <div class="settings-item" id="sitem-dark" onclick="switchSettings('dark',this)">
-                <div class="si-left">🌙 Dark mode</div><span>›</span>
-              </div>
-              <div class="settings-item" id="sitem-acerca" onclick="switchSettings('acerca',this)">
-                <div class="si-left">ℹ️ Acerca de la aplicación</div><span>›</span>
-              </div>
-              <div class="settings-item" id="sitem-ayuda" onclick="switchSettings('ayuda',this)">
-                <div class="si-left">❓ Ayuda</div><span>›</span>
-              </div>
-              <div class="settings-item danger" id="sitem-cerrar" onclick="switchSettings('cerrar',this)">
-                <div class="si-left">✕ Cerrar sesión</div><span>›</span>
-              </div>
-            </div>
-
-            <!-- Panel de detalle del ajuste seleccionado -->
-            <div class="settings-detail">
-
-              <!-- Sub-panel: Perfil -->
-              <div id="sp-perfil" class="sp-pane active">
-                <h3>👤 Detalles del Perfil</h3>
-                <form id="form-perfil-paciente" onsubmit="event.preventDefault(); savePatientProfile();">
-                  <div class="form-field">
-                    <label>Nombre</label>
-                    <input type="text" value="Juan Pérez" id="p-nombre" required>
-                  </div>
-                  <div style="display:flex; gap:16px;">
-                    <div class="form-field" style="flex:1;">
-                      <label>Edad</label>
-                      <input type="number" value="82" id="p-edad" min="0">
-                    </div>
-                    <div class="form-field" style="flex:1;">
-                      <label>Fecha de nacimiento</label>
-                      <input type="date" value="1944-03-15" id="p-fecha">
-                    </div>
-                  </div>
-                  <div style="display:flex; gap:16px;">
-                    <div class="form-field" style="flex:1;">
-                      <label>Género</label>
-                      <input type="text" value="Masculino" id="p-genero">
-                    </div>
-                    <div class="form-field" style="flex:1;">
-                      <label>Tipo de Sangre</label>
-                      <input type="text" value="O+" id="p-sangre">
-                    </div>
-                  </div>
-                  <div class="form-field">
-                    <label>Alergias</label>
-                    <input type="text" value="Ninguna conocida" id="p-alergias">
-                  </div>
-                  <div class="form-field">
-                    <label>Condiciones Médicas / Diagnóstico</label>
-                    <input type="text" value="Hipertensión" id="p-condiciones">
-                  </div>
-                  <div class="form-field">
-                    <label>Contacto de emergencia</label>
-                    <input type="text" value="Carlos Pérez — 555-0202" id="p-contacto">
-                  </div>
-                  <div style="margin-top: 16px; text-align: right;">
-                    <button type="submit"
-                      style="background: var(--teal); color: var(--white); padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s;">💾
-                      Guardar Cambios</button>
-                  </div>
-                </form>
-              </div>
-
-              <!-- Sub-panel: Seguridad -->
-              <div id="sp-seguridad" class="sp-pane">
-                <h3>🔒 Seguridad</h3>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="pending-chip">pendiente</div>
-              </div>
-
-              <!-- Sub-panel: Notificaciones -->
-              <div id="sp-noti" class="sp-pane">
-                <h3>🔔 Notificaciones</h3>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="pending-chip">pendiente</div>
-              </div>
-
-              <!-- Sub-panel: Dark mode -->
-              <div id="sp-dark" class="sp-pane">
-                <h3>🌙 Dark Mode</h3>
-                <div class="toggle-row">
-                  <span>Activar modo oscuro</span>
-                  <label class="switch-wrap">
-                    <input type="checkbox" id="dark-toggle" onchange="toggleDark(this)">
-                    <span class="slider-pill"></span>
-                  </label>
-                </div>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="pending-chip">pendiente</div>
-              </div>
-
-              <!-- Sub-panel: Acerca de -->
-              <div id="sp-acerca" class="sp-pane">
-                <h3>ℹ️ Acerca de la Aplicación</h3>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="pending-chip">pendiente</div>
-              </div>
-
-              <!-- Sub-panel: Ayuda -->
-              <div id="sp-ayuda" class="sp-pane">
-                <h3>❓ Ayuda</h3>
-                <div class="folder-item">📌 Preguntas frecuentes</div>
-                <div class="placeholder-bar" style="margin-top:10px;"></div>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-              </div>
-
-              <!-- Sub-panel: Cerrar sesión -->
-              <div id="sp-cerrar" class="sp-pane">
-                <h3>✕ Cerrar Sesión</h3>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="placeholder-bar"></div>
-                <div class="logout-zone">
-                  <p>¿Estás seguro de que deseas cerrar sesión de la aplicación MDI?</p>
-                  <button class="btn-logout" id="btn-logout" onclick="logout()">Cerrar Sesión</button>
-                </div>
-              </div>
-
-            </div><!-- end settings-detail -->
-          </div><!-- end settings-layout -->
-        </div><!-- end section-ajustes -->
-
-
-      </main><!-- end content-area -->
-    </div><!-- end main-wrapper -->
-  </div><!-- end app -->
-
-
-  <!-- ================================================================ -->
-  <!-- JAVASCRIPT — Lógica de navegación e interacción                  -->
-  <!-- ================================================================ -->
+      </form>
+    </section>
+
+  </main>
+  <!-- FIN DEL CONTENIDO PRINCIPAL -->
+
+
+  <!-- ============================================================ -->
+  <!-- PIE DE PÁGINA (FOOTER)                                       -->
+  <!-- ============================================================ -->
+  <footer>
+    <p>
+      Proyecto MDI — Monitoreo Dinámico Inteligente | Primera Etapa (Jun-Jul-Ago 2026)
+      <br>
+      ⚠️ Esta es una visualización estática de diseño. La app no sustituye a un médico.
+    </p>
+  </footer>
+
+
+  <!-- ============================================================ -->
+  <!-- JAVASCRIPT: Pequeña lógica interactiva para el sketch.       -->
+  <!-- El tag 'script' siempre va al final del body, para que el    -->
+  <!-- HTML cargue primero y luego la lógica.                       -->
+  <!-- ============================================================ -->
   <script>
 
-    // Inicializar QR y comprobación de emergencia
-    document.addEventListener('DOMContentLoaded', () => {
-      // 1. Comprobar si estamos en la vista de emergencia vía QR
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('emergencia') === '1') {
-        const dataStr = params.get('d') || params.get('data');
-        if (dataStr) {
-          try {
-            const data = params.get('d') ? decodificarDatos(dataStr) : JSON.parse(decodeURIComponent(dataStr));
-            mostrarResumenEmergencia(data);
-            return; // Detener flujo normal si es vista de emergencia
-          } catch(e) { console.error("Error leyendo datos del QR", e); }
-        }
-      }
-      
-      // 2. Recuperar la última edición del prototipo en este navegador.
-      cargarPerfilLocal();
-      setTimeout(generarResumenQR, 500);
-      document.getElementById('form-paciente-perfil')?.addEventListener('input', generarResumenQR);
-      document.getElementById('form-paciente-perfil')?.addEventListener('change', generarResumenQR);
-    });
-
-    let qrcodeInstance = null;
-
-    function valorPaciente(id) {
-      return document.getElementById(id)?.value?.trim() || '';
-    }
-
-    function leerPaciente() {
-      return {
-        nombre: valorPaciente('p-nombre-gen'), sangre: valorPaciente('p-sangre'), alergias: valorPaciente('p-alergias'),
-        condicion: valorPaciente('p-condicion'), medicamentos: valorPaciente('p-medicamentos'), dispositivos: valorPaciente('p-dispositivos'),
-        edad: valorPaciente('p-edad'), nacimiento: valorPaciente('p-fecha'), genero: valorPaciente('p-genero'), seguro: valorPaciente('p-ss'),
-        contacto_nombre: valorPaciente('p-contacto-nombre'), contacto_tel: valorPaciente('p-contacto-tel')
-      };
-    }
-    function codificarDatos(data) { return btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
-    function decodificarDatos(data) { return JSON.parse(decodeURIComponent(escape(atob(data)))); }
-    function guardarPerfilLocal(data) { localStorage.setItem('mdi-perfil-paciente', JSON.stringify(data)); }
-    function cargarPerfilLocal() {
-      try {
-        const guardado = JSON.parse(localStorage.getItem('mdi-perfil-paciente') || 'null');
-        if (!guardado) return;
-        const campos = { nombre:'p-nombre-gen', sangre:'p-sangre', alergias:'p-alergias', condicion:'p-condicion', medicamentos:'p-medicamentos', dispositivos:'p-dispositivos', edad:'p-edad', nacimiento:'p-fecha', genero:'p-genero', seguro:'p-ss', contacto_nombre:'p-contacto-nombre', contacto_tel:'p-contacto-tel' };
-        Object.entries(campos).forEach(([llave, id]) => { if (guardado[llave] !== undefined && document.getElementById(id)) document.getElementById(id).value = guardado[llave]; });
-      } catch (error) { console.warn('No se pudo recuperar el perfil local', error); }
-    }
-
-    function generarResumenQR() {
-      const resumen = leerPaciente();
-
-      // Actualizar nombre en la UI superior
-      const displayName = document.getElementById('p-display-name');
-      if(displayName) displayName.innerText = resumen.nombre || 'Paciente';
-      guardarPerfilLocal(resumen);
-
-      // El QR apunta a esta misma aplicación con los datos de emergencia.
-      // Para que un teléfono pueda abrirlo, la app debe estar publicada en una URL
-      // https; una ruta file:/// local del equipo no es accesible desde el móvil.
-      // Cuando se inicia con servidor_mdi.py, esta variable contiene la URL
-      // local de la computadora (por ejemplo http://192.168.1.25:8080).
-      // Así el QR puede abrirse desde un teléfono conectado a la misma Wi-Fi.
-      const pagina = new URL(window.MDI_PUBLIC_BASE_URL || window.location.href);
-      pagina.search = '';
-      pagina.hash = '';
-      pagina.searchParams.set('emergencia', '1');
-      pagina.searchParams.set('d', codificarDatos(resumen));
-      const qrUrl = pagina.toString();
-
-      const qrContainer = document.getElementById('qrcode');
-      if (qrContainer && typeof QRCode !== 'undefined') {
-        qrContainer.innerHTML = ''; // Limpiar anterior
-        qrcodeInstance = new QRCode(qrContainer, {
-          text: qrUrl,
-          width: 220,
-          height: 220,
-          colorDark : "#000000",
-          colorLight : "#ffffff",
-          correctLevel : QRCode.CorrectLevel.L
-        });
-      } else if (qrContainer) {
-        qrContainer.textContent = 'No se pudo cargar el generador QR. Revisa tu conexión y recarga la página.';
-        qrContainer.style.maxWidth = '220px';
-        qrContainer.style.color = 'var(--danger)';
-      }
-    }
-
-    function mostrarResumenEmergencia(data) {
-      // La ficha vive dentro de #app; si se oculta el padre, no se verá al escanear.
-      document.getElementById('app').classList.add('visible');
-      document.getElementById('screen-login').style.display = 'none';
-      
-      document.getElementById('re-nombre').innerText = data.nombre || '--';
-      document.getElementById('re-sangre').innerText = data.sangre || '--';
-      document.getElementById('re-alergias').innerText = data.alergias || '--';
-      document.getElementById('re-condicion').innerText = data.condicion || '--';
-      document.getElementById('re-medicamentos').innerText = data.medicamentos || '--';
-      document.getElementById('re-edad').innerText = data.edad || '--';
-      document.getElementById('re-contacto-nombre').innerText = data.contacto_nombre || '--';
-      document.getElementById('re-contacto-tel').innerText = data.contacto_tel || '--';
-      const detalles = [data.genero, data.nacimiento ? 'Nacimiento: ' + data.nacimiento : '', data.seguro ? 'Seguro: ' + data.seguro : '', data.dispositivos ? 'Dispositivos: ' + data.dispositivos : ''].filter(Boolean);
-      document.getElementById('re-detalles').innerText = detalles.join(' · ') || '--';
-
-      const view = document.getElementById('view-resumen-emergencia');
-      if (view) {
-        view.style.display = 'block';
-      }
-    }
-
-    function cerrarResumenEmergencia() {
-      // Remover los params de la URL para volver a la app normal
-      window.history.replaceState({}, document.title, window.location.pathname);
-      document.getElementById('view-resumen-emergencia').style.display = 'none';
-      document.getElementById('screen-login').style.display = 'flex'; // Volver al inicio normal
-    }
-
-    let rolActivo = '';
-
-    function ocultarPantallas() {
-      document.getElementById('screen-login').style.display = 'none';
-      document.getElementById('screen-roles').style.display = 'none';
-      document.getElementById('screen-formulario').style.display = 'none';
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Entrar a la app desde el login
-    ---------------------------------------------------------------- */
-    function openApp() {
-      ocultarPantallas();
-      document.getElementById('app').classList.add('visible');
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIONES: Navegación del Flujo de Registro
-    ---------------------------------------------------------------- */
-    function showLogin() {
-      ocultarPantallas();
-      document.getElementById('screen-login').style.display = 'flex';
-    }
-
-    function showRoles() {
-      ocultarPantallas();
-      document.getElementById('screen-roles').style.display = 'flex';
-    }
-
-    function showFormulario(rol) {
-      rolActivo = rol;
-      document.getElementById('form-subtitle').innerText = `Creando cuenta para Perfil: ${rol}`;
-      ocultarPantallas();
-      document.getElementById('screen-formulario').style.display = 'flex';
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIONES: Modal de Términos y Registro Final
-    ---------------------------------------------------------------- */
-    function mostrarModalTerminos(evento) {
-      evento.preventDefault(); 
-      const modal = document.getElementById('modal-terminos');
-      const checkbox = document.getElementById('check-terminos');
-      const botonFinalizar = document.getElementById('btn-finalizar');
-
-      checkbox.checked = false;
-      botonFinalizar.disabled = true;
-      botonFinalizar.classList.add('btn-disabled');
-
-      modal.classList.add('active');
-    }
-
-    function cerrarModal() {
-      document.getElementById('modal-terminos').classList.remove('active');
-    }
-
-    function validarAceptacion(evento) {
-      if (evento) evento.stopPropagation();
-      const isChecked = document.getElementById('check-terminos').checked;
-      const botonFinalizar = document.getElementById('btn-finalizar');
-      
-      botonFinalizar.disabled = !isChecked;
-      if (isChecked) {
-        botonFinalizar.classList.remove('btn-disabled');
-      } else {
-        botonFinalizar.classList.add('btn-disabled');
-      }
-    }
-
-    function toggleCheckbox(evento) {
-      if (evento.target.id !== 'check-terminos') {
-        const checkbox = document.getElementById('check-terminos');
-        checkbox.checked = !checkbox.checked;
-        validarAceptacion();
-      }
-    }
-
-    function finalizarRegistro() {
-      const nombreUsuario = document.getElementById('reg-nombre').value;
-      cerrarModal();
-      
-      alert(`¡Registro Completado con Éxito!\n\nBienvenido/a ${nombreUsuario}.\nTu cuenta con el rol de [${rolActivo}] ha sido creada en MDI.`);
-      
-      document.getElementById('form-registro-unificado').reset();
-      openApp(); 
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Navegar entre secciones principales
-       - Oculta todas las secciones
-       - Muestra la sección pedida
-       - Actualiza el ítem activo en el sidebar
-    ---------------------------------------------------------------- */
-    // Secciones que tienen un ítem de nav en el sidebar
-    var mainSections = ['home', 'mensajes', 'calendario', 'paciente', 'notas', 'archivos', 'ajustes'];
-    // Sub-secciones que pertenecen al home
-    var homeSubs = ['emergencia', 'recordatorio', 'completado'];
-
-    function navigate(id) {
-      // Ocultar todas las secciones
-      document.querySelectorAll('.section').forEach(function (s) {
-        s.classList.remove('active');
-      });
-
-      // Mostrar la sección seleccionada
-      var target = document.getElementById('section-' + id);
-      if (target) target.classList.add('active');
-
-      // Actualizar el nav activo en el sidebar
-      document.querySelectorAll('.nav-item').forEach(function (n) {
-        n.classList.remove('active');
-      });
-
-      var navEl = document.getElementById('nav-' + id);
-      if (navEl) {
-        navEl.classList.add('active');
-      } else if (homeSubs.indexOf(id) !== -1) {
-        // Sub-secciones del home: el sidebar sigue marcando "Inicio"
-        document.getElementById('nav-home').classList.add('active');
-      }
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN GENÉRICA: Cambiar tab dentro de una sección
-       Uso:
-         switchTab('paciente', 'medicos', btnElement)
-         switchTab('archivos', 'docs', btnElement)
-    ---------------------------------------------------------------- */
-    function switchTab(group, paneId, btn) {
-      // Prefijos de pane según el grupo
-      var panePrefix = (group === 'paciente') ? 'ptab-pane-' : 'atab-pane-';
-
-      // Ocultar todos los panes del grupo
-      var allPanes = document.querySelectorAll(
-        '[id^="' + panePrefix + '"]'
-      );
-      allPanes.forEach(function (p) { p.classList.remove('active'); });
-
-      // Mostrar el pane seleccionado
-      var target = document.getElementById(panePrefix + paneId);
-      if (target) target.classList.add('active');
-
-      // Actualizar botones del grupo
-      var tabBarSel = (group === 'paciente')
-        ? '.tab-bar .tab-btn'
-        : '.archivos-tab-bar button';
-
-      document.querySelectorAll(tabBarSel).forEach(function (b) {
-        b.classList.remove('active');
-      });
-      btn.classList.add('active');
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Seleccionar un contacto en la sección de Mensajes
-    ---------------------------------------------------------------- */
-    function selectContact(el, name, preview) {
-      // Marcar el contacto seleccionado
-      document.querySelectorAll('.contact-item').forEach(function (c) {
-        c.classList.remove('selected');
-      });
-      el.classList.add('selected');
-
-      // Cambiar el nombre en el chat header
-      document.getElementById('chat-name').textContent = name;
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Enviar un mensaje en el chat
-    ---------------------------------------------------------------- */
-    function sendMsg() {
-      var input = document.getElementById('chat-input');
-      var text = input.value.trim();
-      if (!text) return;
-
-      var area = document.getElementById('chat-msgs');
-      var bubble = document.createElement('div');
-      bubble.className = 'bubble bubble-out';
-      bubble.innerHTML = text + '<div class="bubble-tick">✓</div>';
-      area.appendChild(bubble);
-      area.scrollTop = area.scrollHeight;  // Scroll automático al fondo
-      input.value = '';
-      input.focus();
-    }
-
-    // Compatibilidad con la versión anterior del chat. El diseño actual usa
-    // #chat-input-text; comprobar la existencia evita que un elemento eliminado
-    // detenga todo el JavaScript (notas, archivos y navegación incluidos).
-    var legacyChatInput = document.getElementById('chat-input');
-    if (legacyChatInput) {
-      legacyChatInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') sendMsg();
-      });
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Cambiar sub-panel en Ajustes
-    ---------------------------------------------------------------- */
-    function switchSettings(spId, item) {
-      // Ocultar todos los sub-paneles
-      document.querySelectorAll('.sp-pane').forEach(function (p) {
-        p.classList.remove('active');
-      });
-      document.getElementById('sp-' + spId).classList.add('active');
-
-      // Actualizar ítem activo del menú
-      document.querySelectorAll('.settings-item').forEach(function (i) {
-        i.classList.remove('active');
-      });
-      item.classList.add('active');
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Cargar una nota en el editor
-    ---------------------------------------------------------------- */
-    function loadNote(date, title, body) {
-      document.getElementById('note-date-display').textContent = date;
-      document.getElementById('note-title').value = title;
-      document.getElementById('note-body').value = body;
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Crear una nueva nota (limpia el editor)
-    ---------------------------------------------------------------- */
-    function newNote() {
-      var today = new Date().toLocaleDateString('es-MX', {
-        day: '2-digit', month: '2-digit', year: '2-digit'
-      });
-      document.getElementById('note-date-display').textContent = today;
-      document.getElementById('note-title').value = '';
-      document.getElementById('note-body').value = '';
-      document.getElementById('note-title').focus();
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Toggle Dark Mode (placeholder)
-    ---------------------------------------------------------------- */
-    function toggleDark(checkbox) {
-      // Función en desarrollo — se implementará en etapas futuras
-      if (checkbox.checked) {
-        document.body.style.filter = 'brightness(0.85) saturate(0.9)';
-      } else {
-        document.body.style.filter = '';
-      }
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Cerrar sesión
-    ---------------------------------------------------------------- */
-    function logout() {
-      document.getElementById('app').classList.remove('visible');
-      document.getElementById('screen-login').style.display = 'flex';
-      // Resetear navegación al home
-      navigate('home');
-    }
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Guardar datos del perfil del paciente
-    ---------------------------------------------------------------- */
-    function savePatientProfile() {
-      // Aquí se enviaría la información a la base de datos.
-      // Por ahora, solo simulamos que se guarda mostrando una alerta
-      // y actualizamos el nombre del paciente en la interfaz si se cambió.
-
-      var nuevoNombre = document.getElementById('p-nombre').value;
-      if (nuevoNombre) {
-        // Actualizar el nombre en la barra superior y en el sidebar de ajustes
-        var nameDisplays = document.querySelectorAll('.patient-name, .sp-name');
-        nameDisplays.forEach(function (el) {
-          el.textContent = nuevoNombre;
-        });
-      }
-
-      alert('¡Información del paciente guardada correctamente!');
-    }
-
-
-    /* ----------------------------------------------------------------
-       FUNCIÓN: Guardar recordatorio (Calendario)
-    ---------------------------------------------------------------- */
-    function guardarRecordatorio() {
-      const titulo = document.getElementById('rec-titulo').value.trim();
-      const fecha = document.getElementById('rec-fecha').value;
-      const hora = document.getElementById('rec-hora').value;
-      const color = document.querySelector('input[name="rec-color"]:checked').value;
-      const frecuencia = document.getElementById('rec-frecuencia').value;
-
-      if(!titulo || !fecha || !hora) {
-        alert("Por favor completa los campos del recordatorio.");
-        return;
-      }
-
-      // 1. Mostrar alerta informando sobre la notificación de 10 min
-      alert(`Recordatorio guardado:\n"${titulo}"\nEl sistema te notificará 10 minutos antes de las ${hora}.`);
-
-      // 2. Agregar el evento a la lista de "Próximos Pendientes"
-      const listaPendientes = document.getElementById('lista-pendientes');
-      if (listaPendientes) {
-        // Formatear fecha de AAAA-MM-DD a DD/MM/AA
-        const partesFecha = fecha.split('-');
-        let fechaFormateada = fecha;
-        if (partesFecha.length === 3) {
-          fechaFormateada = `${partesFecha[2]}/${partesFecha[1]}/${partesFecha[0].substring(2)}`;
-        }
-        
-        const nuevoPendiente = document.createElement('div');
-        nuevoPendiente.className = 'event-item';
-        nuevoPendiente.style.display = 'flex';
-        nuevoPendiente.style.gap = '12px';
-        nuevoPendiente.style.marginBottom = '12px';
-        nuevoPendiente.style.padding = '12px';
-        nuevoPendiente.style.background = 'white';
-        nuevoPendiente.style.borderRadius = '8px';
-        nuevoPendiente.style.borderLeft = `4px solid ${color}`;
-        
-        nuevoPendiente.innerHTML = `
-          <div class="ev-date" style="font-weight: bold; color: var(--teal-dark); min-width: 70px;">${fechaFormateada} <br><span style="font-size:0.8rem; opacity:0.8">${hora}</span></div>
-          <div class="ev-text" style="color: var(--text-dark); align-self: center;">${titulo} <br><small style="opacity:0.7">${frecuencia !== 'una' ? '🔄 ' + frecuencia : ''}</small></div>
-        `;
-        
-        listaPendientes.appendChild(nuevoPendiente);
-      }
-
-      // Limpiar formulario
-      document.getElementById('form-recordatorio').reset();
-    }
-
-    /* ================================================================
-       SISTEMA DE NOTAS PERSONALIZADAS
-    ================================================================ */
-
-    // Banco de notas en memoria + persistido en localStorage
-    let notasDB = [];
-    let notaEditandoId = null;
-
-    function notasCargar() {
-      try {
-        notasDB = JSON.parse(localStorage.getItem('mdi-notas') || '[]');
-      } catch(e) { notasDB = []; }
-    }
-
-    function notasGuardarStorage() {
-      localStorage.setItem('mdi-notas', JSON.stringify(notasDB));
-    }
-
-    function abrirModalNota(id) {
-      notaEditandoId = id || null;
-      const modal = document.getElementById('modal-nota');
-      const tituloModal = document.getElementById('modal-nota-titulo');
-
-      if (id !== undefined && id !== null) {
-        // Modo edición: rellenar campos
-        const nota = notasDB.find(function(n) { return n.id === id; });
-        if (!nota) return;
-        tituloModal.textContent = '✏️ Editar Nota';
-        document.getElementById('modal-nota-campo-titulo').value = nota.titulo;
-        document.getElementById('modal-nota-fecha').value = nota.fecha;
-        document.getElementById('modal-nota-hora').value = nota.hora;
-        document.getElementById('modal-nota-contenido').value = nota.contenido || '';
-      } else {
-        // Modo creación: limpiar campos y poner fecha/hora actual
-        tituloModal.textContent = '✏️ Nueva Nota';
-        document.getElementById('modal-nota-campo-titulo').value = '';
-        const ahora = new Date();
-        document.getElementById('modal-nota-fecha').value = ahora.toISOString().split('T')[0];
-        document.getElementById('modal-nota-hora').value = ahora.toTimeString().substring(0,5);
-        document.getElementById('modal-nota-contenido').value = '';
-      }
-
-      modal.style.display = 'flex';
-    }
-
-    function cerrarModalNota() {
-      document.getElementById('modal-nota').style.display = 'none';
-      notaEditandoId = null;
-    }
-
-    function guardarNota() {
-      const titulo = document.getElementById('modal-nota-campo-titulo').value.trim();
-      const fecha = document.getElementById('modal-nota-fecha').value;
-      const hora = document.getElementById('modal-nota-hora').value;
-      const contenido = document.getElementById('modal-nota-contenido').value.trim();
-
-      if (!titulo || !fecha || !hora) {
-        alert('Por favor completa los campos obligatorios: Título, Fecha y Hora.');
-        return;
-      }
-
-      if (notaEditandoId !== null) {
-        // Actualizar nota existente
-        const idx = notasDB.findIndex(function(n) { return n.id === notaEditandoId; });
-        if (idx !== -1) {
-          notasDB[idx] = { id: notaEditandoId, titulo, fecha, hora, contenido };
-        }
-      } else {
-        // Crear nota nueva
-        const nuevaNota = {
-          id: Date.now(),
-          titulo,
-          fecha,
-          hora,
-          contenido
-        };
-        notasDB.push(nuevaNota);
-      }
-
-      notasGuardarStorage();
-      cerrarModalNota();
-      renderNotas();
-    }
-
-    function eliminarNota(id) {
-      if (!confirm('¿Eliminar esta nota?')) return;
-      notasDB = notasDB.filter(function(n) { return n.id !== id; });
-      notasGuardarStorage();
-      renderNotas();
-    }
-
-    function filtrarNotas() {
-      renderNotas();
-    }
-
-    function renderNotas() {
-      const container = document.getElementById('notas-container');
-      const vacio = document.getElementById('notas-vacio');
-      const busqueda = (document.getElementById('notas-search')?.value || '').toLowerCase();
-      const orden = document.getElementById('notas-orden')?.value || 'fecha';
-
-      // 1. Filtrar
-      let lista = notasDB.filter(function(n) {
-        return n.titulo.toLowerCase().includes(busqueda) || n.fecha.includes(busqueda);
-      });
-
-      // 2. Ordenar
-      lista.sort(function(a, b) {
-        if (orden === 'titulo') {
-          return a.titulo.localeCompare(b.titulo, 'es');
-        } else {
-          // Fecha descendente, luego hora descendente
-          if (b.fecha !== a.fecha) return b.fecha.localeCompare(a.fecha);
-          return b.hora.localeCompare(a.hora);
-        }
-      });
-
-      // 3. Agrupar
-      const grupos = {};
-      lista.forEach(function(nota) {
-        let clave;
-        if (orden === 'titulo') {
-          clave = nota.titulo[0].toUpperCase(); // Inicial del título
-        } else {
-          // Formatear fecha AAAA-MM-DD → DD/MM/AAAA
-          const p = nota.fecha.split('-');
-          clave = p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : nota.fecha;
-        }
-        if (!grupos[clave]) grupos[clave] = [];
-        grupos[clave].push(nota);
-      });
-
-      // 4. Renderizar
-      container.innerHTML = '';
-
-      if (Object.keys(grupos).length === 0) {
-        vacio.style.display = 'block';
-        return;
-      }
-      vacio.style.display = 'none';
-
-      Object.keys(grupos).forEach(function(clave) {
-        // Cabecera del grupo
-        const cabecera = document.createElement('div');
-        cabecera.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-bottom: 4px;';
-        cabecera.innerHTML = `
-          <span style="font-size:0.8rem; font-weight: bold; color: var(--teal-dark); text-transform: uppercase; letter-spacing: 1px;">${clave}</span>
-          <div style="flex:1; height:1px; background: var(--teal-light);"></div>
-          <span style="font-size:0.75rem; color: var(--teal-dark); opacity: 0.7;">${grupos[clave].length} nota${grupos[clave].length !== 1 ? 's' : ''}</span>
-        `;
-        container.appendChild(cabecera);
-
-        // Tarjetas del grupo
-        const grid = document.createElement('div');
-        grid.style.cssText = 'display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-bottom: 16px;';
-
-        grupos[clave].forEach(function(nota) {
-          const card = document.createElement('div');
-          card.style.cssText = 'background: var(--teal-light); border-radius: var(--radius-sm); padding: 16px; box-shadow: var(--shadow); border-left: 4px solid var(--teal-dark); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; position: relative;';
-          card.onmouseenter = function() { card.style.transform = 'translateY(-2px)'; card.style.boxShadow = '0 6px 20px rgba(0,0,0,0.12)'; };
-          card.onmouseleave = function() { card.style.transform = ''; card.style.boxShadow = 'var(--shadow)'; };
-
-          // Formatear fecha para mostrar
-          const fp = nota.fecha.split('-');
-          const fechaMostrar = fp.length === 3 ? fp[2] + '/' + fp[1] + '/' + fp[0].substring(2) : nota.fecha;
-
-          card.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-              <div style="flex:1;">
-                <div style="font-weight: bold; color: var(--teal-darkest); font-size: 1rem; margin-bottom: 6px; line-height: 1.3;">${nota.titulo}</div>
-                <div style="display: flex; gap: 10px; font-size: 0.8rem; color: var(--teal-dark); margin-bottom: 8px;">
-                  <span>📅 ${fechaMostrar}</span>
-                  <span>⏰ ${nota.hora}</span>
-                </div>
-                ${nota.contenido ? `<div style="font-size:0.85rem; color: var(--text-dark); opacity:0.8; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">${nota.contenido}</div>` : ''}
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;">
-                <button onclick="event.stopPropagation(); abrirModalNota(${nota.id})" title="Editar"
-                  style="background: var(--teal-surface); border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem; color: var(--teal-dark);">✏️</button>
-                <button onclick="event.stopPropagation(); eliminarNota(${nota.id})" title="Eliminar"
-                  style="background: #fee2e2; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.85rem; color: var(--danger);">🗑️</button>
-              </div>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-
-        container.appendChild(grid);
-      });
-    }
-
-    // Inicializar notas al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-      notasCargar();
-      renderNotas();
-    });
-
-    // Cerrar modal al hacer click fuera
-    document.getElementById('modal-nota')?.addEventListener('click', function(e) {
-      if (e.target === this) cerrarModalNota();
-    });
-
-    /* ================================================================
-       GESTOR DE ARCHIVOS
-    ================================================================ */
-
-    // Estructura: { 'imagenes/acta': [ {nombre, tipo, url, tamaño}, ... ], ... }
-    let archivosDB = {};
-    let categoriaActual = 'imagenes/acta';
-
-    const NOMBRES_CATEGORIA = {
-      'imagenes/acta': 'Imágenes / Acta',
-      'imagenes/documentos': 'Imágenes / Documentos',
-      'imagenes/recetas': 'Imágenes / Recetas'
-    };
-
-    function archivosCargar() {
-      try {
-        archivosDB = JSON.parse(localStorage.getItem('mdi-archivos') || '{}');
-      } catch(e) { archivosDB = {}; }
-      // Garantizar que todas las categorías existan
-      ['imagenes/acta','imagenes/documentos','imagenes/recetas'].forEach(function(c) {
-        if (!archivosDB[c]) archivosDB[c] = [];
-      });
-    }
-
-    function archivosGuardar() {
-      localStorage.setItem('mdi-archivos', JSON.stringify(archivosDB));
-    }
-
-    function toggleArbol(subId, headerEl) {
-      const sub = document.getElementById(subId);
-      const ico = headerEl.querySelector('span[id^="ico-"]');
-      if (!sub) return;
-      const abierto = sub.style.display !== 'none';
-      sub.style.display = abierto ? 'none' : 'flex';
-      if (ico) ico.style.transform = abierto ? '' : 'rotate(90deg)';
-    }
-
-    function seleccionarCategoria(cat, el) {
-      categoriaActual = cat;
-      // Actualizar estilo activo
-      document.querySelectorAll('.arbol-item').forEach(function(i) {
-        i.style.background = '';
-        i.style.fontWeight = '';
-        i.style.color = 'var(--teal-darkest)';
-      });
-      if (el) {
-        el.style.background = 'var(--teal-dark)';
-        el.style.color = 'white';
-        el.style.fontWeight = 'bold';
-      }
-      // Actualizar miga de pan
-      const ruta = document.getElementById('af-ruta');
-      if (ruta) ruta.textContent = NOMBRES_CATEGORIA[cat] || cat;
-      // Limpiar filtros y renderizar
-      const buscar = document.getElementById('af-buscar');
-      const filtroExt = document.getElementById('af-filtro-ext');
-      if (buscar) buscar.value = '';
-      if (filtroExt) filtroExt.value = '';
-      renderArchivos();
-    }
-
-    function recibirArchivos(input) {
-      const archivos = Array.from(input.files);
-      if (!archivos.length) return;
-      if (!archivosDB[categoriaActual]) archivosDB[categoriaActual] = [];
-      // La categoría se conserva al iniciar la carga aunque el usuario cambie
-      // de carpeta antes de que FileReader termine.
-      const categoriaDestino = categoriaActual;
-      let procesados = 0;
-
-      archivos.forEach(function(file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          archivosDB[categoriaDestino].push({
-            nombre: file.name,
-            tipo: file.type,
-            url: e.target.result,
-            tamaño: file.size,
-            fecha: new Date().toISOString()
-          });
-          procesados++;
-          if (procesados === archivos.length) {
-            try {
-              archivosGuardar();
-              renderArchivos();
-            } catch (error) {
-              alert('No se pudo guardar el archivo en este navegador. Intenta cargar un archivo más pequeño.');
-              console.error('Error al guardar archivos', error);
-            }
-          }
-        };
-        reader.onerror = function() {
-          procesados++;
-          if (procesados === archivos.length) renderArchivos();
-          alert('No se pudo leer el archivo: ' + file.name);
-        };
-        reader.readAsDataURL(file);
-      });
-
-      // Limpiar el input para permitir subir el mismo archivo otra vez
-      input.value = '';
-    }
-
-    function filtrarArchivos() { renderArchivos(); }
-
-    function renderArchivos() {
-      const grid = document.getElementById('af-grid');
-      const vacio = document.getElementById('af-vacio');
-      const busqueda = (document.getElementById('af-buscar')?.value || '').toLowerCase();
-      const extFiltro = (document.getElementById('af-filtro-ext')?.value || '').toLowerCase();
-
-      const lista = (archivosDB[categoriaActual] || []).filter(function(f) {
-        const ext = f.nombre.split('.').pop().toLowerCase();
-        const coincideNombre = f.nombre.toLowerCase().includes(busqueda);
-        const coincideExt = !extFiltro || ext === extFiltro;
-        return coincideNombre && coincideExt;
-      });
-
-      grid.innerHTML = '';
-
-      if (lista.length === 0) {
-        vacio.style.display = 'block';
-        return;
-      }
-      vacio.style.display = 'none';
-
-      lista.forEach(function(archivo, idx) {
-        const ext = archivo.nombre.split('.').pop().toLowerCase();
-        const esImagen = ['png','jpg','jpeg','gif','webp'].includes(ext);
-        const esPdf = ext === 'pdf';
-
-        const card = document.createElement('div');
-        card.onclick = function() { abrirPreview(archivo); };
-        card.style.cssText = 'background: white; border-radius: var(--radius-sm); padding: 12px; box-shadow: var(--shadow); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; border: 1px solid var(--teal-light); position: relative;';
-        card.onmouseenter = function() { card.style.transform = 'translateY(-3px)'; card.style.boxShadow = '0 8px 24px rgba(0,0,0,0.12)'; };
-        card.onmouseleave = function() { card.style.transform = ''; card.style.boxShadow = 'var(--shadow)'; };
-
-        // Previsualización miniatura
-        let thumbHtml;
-        if (esImagen) {
-          thumbHtml = `<img src="${archivo.url}" alt="${archivo.nombre}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid var(--teal-light);">`;
-        } else if (esPdf) {
-          thumbHtml = `<div style="width:80px;height:80px;background:var(--teal-surface);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📄</div>`;
-        } else {
-          thumbHtml = `<div style="width:80px;height:80px;background:var(--teal-surface);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📎</div>`;
-        }
-
-        const kb = (archivo.tamaño / 1024).toFixed(1);
-        const fechaCorta = archivo.fecha ? new Date(archivo.fecha).toLocaleDateString('es-MX') : '';
-        const nombreCorto = archivo.nombre.length > 18 ? archivo.nombre.substring(0,15) + '...' : archivo.nombre;
-
-        card.innerHTML = `
-          ${thumbHtml}
-          <div style="font-size:0.78rem; font-weight:bold; color:var(--teal-darkest); word-break:break-word; line-height:1.2;">${nombreCorto}</div>
-          <div style="font-size:0.7rem; color:var(--teal-dark); opacity:0.8;">.${ext.toUpperCase()} · ${kb} KB</div>
-          <div style="font-size:0.68rem; color:var(--teal-dark); opacity:0.6;">${fechaCorta}</div>
-          <button onclick="event.stopPropagation(); eliminarArchivo('${categoriaActual}', ${idx})" title="Eliminar"
-            style="position:absolute; top:6px; right:6px; background:#fee2e2; border:none; border-radius:4px; padding:2px 6px; cursor:pointer; font-size:0.75rem; color:var(--danger);">✕</button>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function eliminarArchivo(cat, idx) {
-      if (!confirm('¿Eliminar este archivo?')) return;
-      archivosDB[cat].splice(idx, 1);
-      archivosGuardar();
-      renderArchivos();
-    }
-
-    function abrirPreview(archivo) {
-      const ext = archivo.nombre.split('.').pop().toLowerCase();
-      const esImagen = ['png','jpg','jpeg','gif','webp'].includes(ext);
-      const modal = document.getElementById('modal-preview');
-      const img = document.getElementById('preview-img');
-      const pdfMsg = document.getElementById('preview-pdf-msg');
-      const desc = document.getElementById('preview-descargar');
-
-      document.getElementById('preview-nombre').textContent = archivo.nombre;
-
-      if (esImagen) {
-        img.src = archivo.url;
-        img.style.display = 'block';
-        pdfMsg.style.display = 'none';
-      } else {
-        img.style.display = 'none';
-        pdfMsg.style.display = 'block';
-      }
-
-      desc.href = archivo.url;
-      desc.download = archivo.nombre;
-      modal.style.display = 'flex';
-    }
-
-    function cerrarPreview() {
-      document.getElementById('modal-preview').style.display = 'none';
-    }
-
-    // Inicializar gestor de archivos
-    document.addEventListener('DOMContentLoaded', function() {
-      archivosCargar();
-      // Abrir árbol de Imágenes por defecto y seleccionar Acta
-      const subIm = document.getElementById('sub-imagenes');
-      const icoIm = document.getElementById('ico-imagenes');
-      if (subIm) { subIm.style.display = 'flex'; }
-      if (icoIm) { icoIm.style.transform = 'rotate(90deg)'; }
-      seleccionarCategoria('imagenes/acta', document.getElementById('arbol-acta'));
-    });
-
-    /* ================================================================
-       SISTEMA DE MENSAJES / CHAT
-    ================================================================ */
-
-    // Base de datos de conversaciones en memoria
-    var chatDB = {
-      'felipe': {
-        nombre: 'Felipe', inicial: 'F', color: '#0D8A92', estado: 'en línea',
-        mensajes: [
-          { tipo: 'in', texto: '¿Hola, cómo se encuentra Juan?', hora: '19:28', clase: 'texto' },
-          { tipo: 'out', texto: 'Está bien, ya tomó su medicina.', hora: '19:30', clase: 'texto' },
-          { tipo: 'out', texto: 'Falta su comida de la noche.', hora: '19:31', clase: 'texto' }
-        ],
-        actividad: [
-          { tipo: 'mensaje', descripcion: 'Conversación iniciada', hora: '19:28', icono: '💬' }
-        ]
-      },
-      'mariana': {
-        nombre: 'Mariana', inicial: 'M', color: '#19B5BE', estado: 'última vez hoy',
-        mensajes: [
-          { tipo: 'in', texto: 'Sí, el doctor Ramírez es su médico principal.', hora: '3:55', clase: 'texto' },
-          { tipo: 'out', texto: 'Gracias, lo tendré en cuenta.', hora: '3:57', clase: 'texto' }
-        ],
-        actividad: [
-          { tipo: 'mensaje', descripcion: 'Conversación iniciada', hora: '3:55', icono: '💬' }
-        ]
-      },
-      'irene': {
-        nombre: 'Irene', inicial: 'I', color: '#6DD5DA', estado: 'última vez ayer',
-        mensajes: [
-          { tipo: 'in', texto: 'El medicamento está en la mesita de noche.', hora: '9:00', clase: 'texto' }
-        ],
-        actividad: [
-          { tipo: 'mensaje', descripcion: 'Conversación iniciada', hora: '9:00', icono: '💬' }
-        ]
-      }
-    };
-
-    var contactoActual = null; // ID del contacto seleccionado
-    var adjuntoActual = null;  // { url, nombre } de imagen adjunta
-    var mediaRecorder = null;
-    var audioChunks = [];
-    var grabando = false;
-
-    // ── Inicializar chat al cargar ──────────────────────────────────
-    document.addEventListener('DOMContentLoaded', function() {
-      renderContactos();
-    });
-
-    function renderContactos() {
-      var busqueda = (document.getElementById('chat-buscar-contacto')?.value || '').toLowerCase();
-      var lista = document.getElementById('chat-lista-contactos');
-      if (!lista) return;
-      lista.innerHTML = '';
-
-      Object.keys(chatDB).forEach(function(id) {
-        var c = chatDB[id];
-        if (busqueda && !c.nombre.toLowerCase().includes(busqueda)) return;
-
-        var ultimoMsg = c.mensajes.length ? c.mensajes[c.mensajes.length - 1] : null;
-        var preview = ultimoMsg ? (ultimoMsg.clase === 'imagen' ? '📷 Imagen' : ultimoMsg.texto) : '';
-        var hora = ultimoMsg ? ultimoMsg.hora : '';
-
-        var item = document.createElement('div');
-        item.id = 'ci-' + id;
-        item.style.cssText = 'display:flex; align-items:center; gap:12px; padding:12px 14px; cursor:pointer; border-bottom:1px solid var(--teal-lighter); transition:background 0.15s;';
-        item.onmouseenter = function() { if(contactoActual !== id) item.style.background='var(--teal-lightest)'; };
-        item.onmouseleave = function() { if(contactoActual !== id) item.style.background=''; };
-        if (contactoActual === id) { item.style.background = 'var(--teal-surface)'; item.style.borderLeft = '4px solid var(--teal-dark)'; }
-        item.onclick = function() { abrirChat(id); };
-
-        item.innerHTML = `
-          <div style="width:44px;height:44px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1rem;color:white;flex-shrink:0;">${c.inicial}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;">
-              <strong style="color:var(--teal-darkest);font-size:0.95rem;">${c.nombre}</strong>
-              <span style="font-size:0.72rem;color:var(--teal-dark);opacity:0.7;white-space:nowrap;">${hora}</span>
-            </div>
-            <div style="font-size:0.82rem;color:var(--teal-dark);opacity:0.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;">${preview}</div>
-          </div>
-        `;
-        lista.appendChild(item);
-      });
-    }
-
-    function filtrarContactos() { renderContactos(); }
-
-    function abrirChat(id) {
-      contactoActual = id;
-      var c = chatDB[id];
-      if (!c) return;
-
-      // Header
-      document.getElementById('ca-avatar').textContent = c.inicial;
-      document.getElementById('ca-avatar').style.background = c.color;
-      document.getElementById('ca-nombre').textContent = c.nombre;
-      document.getElementById('ca-estado').textContent = c.estado;
-
-      // Mostrar area activa
-      document.getElementById('chat-empty-state').style.display = 'none';
-      var chatActivo = document.getElementById('chat-activo');
-      chatActivo.style.display = 'flex';
-
-      // Cambiar a tab Chat por defecto
-      switchChatTab('chat');
-
-      // Renderizar mensajes
-      renderBurbujas();
-      renderActividad();
-      renderContactos();
-    }
-
-    function abrirNuevoChat() {
-      var nombre = prompt('Nombre del nuevo contacto:');
-      if (!nombre || !nombre.trim()) return;
-      var id = nombre.trim().toLowerCase().replace(/\s+/g, '-');
-      if (!chatDB[id]) {
-        var colores = ['#0D8A92','#19B5BE','#075E64','#3DC8D0','#6DD5DA'];
-        chatDB[id] = {
-          nombre: nombre.trim(),
-          inicial: nombre.trim()[0].toUpperCase(),
-          color: colores[Math.floor(Math.random() * colores.length)],
-          estado: 'nuevo contacto',
-          mensajes: [],
-          actividad: [{ tipo: 'nuevo', descripcion: 'Contacto creado', hora: horaActual(), icono: '👤' }]
-        };
-      }
-      renderContactos();
-      abrirChat(id);
-    }
-
-    function renderBurbujas() {
-      if (!contactoActual || !chatDB[contactoActual]) return;
-      var area = document.getElementById('chat-bubbles');
-      area.innerHTML = '';
-
-      chatDB[contactoActual].mensajes.forEach(function(msg) {
-        var div = document.createElement('div');
-        div.style.cssText = `display:flex; justify-content:${msg.tipo==='out'?'flex-end':'flex-start'};`;
-
-        if (msg.clase === 'imagen') {
-          div.innerHTML = `
-            <div style="max-width:240px; background:${msg.tipo==='out'?'var(--teal-dark)':'white'}; border-radius:12px; padding:6px; box-shadow:var(--shadow);">
-              <img src="${msg.url}" alt="imagen" style="width:100%;border-radius:8px;display:block;cursor:pointer;" onclick="abrirImgChat('${msg.url}')">
-              <div style="font-size:0.7rem;text-align:right;margin-top:4px;color:${msg.tipo==='out'?'rgba(255,255,255,0.7)':'var(--teal-dark)'};">${msg.hora} ✓✓</div>
-            </div>`;
-        } else if (msg.clase === 'audio') {
-          div.innerHTML = `
-            <div style="max-width:280px; background:${msg.tipo==='out'?'var(--teal-dark)':'white'}; border-radius:20px; padding:10px 14px; box-shadow:var(--shadow); display:flex; align-items:center; gap:8px;">
-              <span style="font-size:1.3rem;">🎙️</span>
-              <audio controls src="${msg.url}" style="height:32px;flex:1;"></audio>
-              <div style="font-size:0.7rem;color:${msg.tipo==='out'?'rgba(255,255,255,0.7)':'var(--teal-dark)'};">${msg.hora}</div>
-            </div>`;
-        } else {
-          div.innerHTML = `
-            <div style="max-width:70%; background:${msg.tipo==='out'?'var(--teal-dark)':'white'}; color:${msg.tipo==='out'?'white':'var(--text-dark)'}; border-radius:${msg.tipo==='out'?'18px 18px 4px 18px':'18px 18px 18px 4px'}; padding:10px 14px; box-shadow:var(--shadow); font-size:0.92rem; line-height:1.4; word-break:break-word;">
-              ${msg.texto}
-              <div style="font-size:0.68rem;text-align:right;margin-top:4px;opacity:0.7;">${msg.hora} ✓✓</div>
-            </div>`;
-        }
-        area.appendChild(div);
-      });
-
-      area.scrollTop = area.scrollHeight;
-    }
-
-    function renderActividad() {
-      if (!contactoActual) return;
-      var c = chatDB[contactoActual];
-      var lista = document.getElementById('chat-actividad-lista');
-      var vacio = document.getElementById('chat-actividad-vacio');
-      lista.innerHTML = '';
-
-      if (!c.actividad || c.actividad.length === 0) {
-        vacio.style.display = 'block'; return;
-      }
-      vacio.style.display = 'none';
-
-      c.actividad.slice().reverse().forEach(function(act) {
-        var item = document.createElement('div');
-        item.style.cssText = 'display:flex;align-items:flex-start;gap:12px;padding:12px;background:white;border-radius:var(--radius-sm);box-shadow:var(--shadow);border-left:3px solid var(--teal);';
-        item.innerHTML = `
-          <div style="font-size:1.4rem;flex-shrink:0;">${act.icono}</div>
-          <div style="flex:1;">
-            <div style="font-size:0.88rem;font-weight:bold;color:var(--teal-darkest);">${act.descripcion}</div>
-            <div style="font-size:0.75rem;color:var(--teal-dark);opacity:0.7;margin-top:2px;">${act.hora}</div>
-          </div>`;
-        lista.appendChild(item);
-      });
-    }
-
-    function switchChatTab(tab) {
-      var esChat = tab === 'chat';
-      document.getElementById('chat-tab-chat').style.display = esChat ? 'flex' : 'none';
-      document.getElementById('chat-tab-actividad').style.display = esChat ? 'none' : 'block';
-      document.getElementById('tab-btn-chat').style.background = esChat ? 'white' : 'rgba(255,255,255,0.2)';
-      document.getElementById('tab-btn-chat').style.color = esChat ? 'var(--teal-darkest)' : 'white';
-      document.getElementById('tab-btn-actividad').style.background = !esChat ? 'white' : 'rgba(255,255,255,0.2)';
-      document.getElementById('tab-btn-actividad').style.color = !esChat ? 'var(--teal-darkest)' : 'white';
-      if (!esChat) renderActividad();
-    }
-
-    function enviarMensaje() {
-      if (!contactoActual) return;
-      var c = chatDB[contactoActual];
-      var hora = horaActual();
-
-      // Enviar imagen adjunta si existe
-      if (adjuntoActual) {
-        c.mensajes.push({ tipo: 'out', clase: 'imagen', url: adjuntoActual.url, nombre: adjuntoActual.nombre, hora: hora });
-        c.actividad.push({ tipo: 'adjunto', descripcion: 'Imagen adjuntada: ' + adjuntoActual.nombre, hora: hora, icono: '🖼️' });
-        cancelarAdjunto();
-      }
-
-      // Enviar texto
-      var input = document.getElementById('chat-input-text');
-      var texto = input ? input.value.trim() : '';
-      if (texto) {
-        c.mensajes.push({ tipo: 'out', clase: 'texto', texto: texto, hora: hora });
-        c.actividad.push({ tipo: 'mensaje', descripcion: 'Mensaje enviado: "' + texto.substring(0,40) + (texto.length>40?'...':'"'), hora: hora, icono: '💬' });
-        input.value = '';
-        input.style.height = 'auto';
-      }
-
-      renderBurbujas();
-      renderContactos();
-    }
-
-    function adjuntarImagen(input) {
-      var file = input.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        adjuntoActual = { url: e.target.result, nombre: file.name };
-        var prev = document.getElementById('chat-preview-adjunto');
-        document.getElementById('chat-preview-img').src = e.target.result;
-        document.getElementById('chat-preview-nombre').textContent = file.name;
-        prev.style.display = 'flex';
-      };
-      reader.readAsDataURL(file);
-      input.value = '';
-    }
-
-    function cancelarAdjunto() {
-      adjuntoActual = null;
-      document.getElementById('chat-preview-adjunto').style.display = 'none';
-      document.getElementById('chat-preview-img').src = '';
-    }
-
-    function toggleGrabacion() {
-      if (grabando) {
-        detenerGrabacion();
-      } else {
-        iniciarGrabacion();
-      }
-    }
-
-    function iniciarGrabacion() {
-      if (!navigator.mediaDevices) { alert('Tu navegador no soporta grabación de audio.'); return; }
-      navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
-        grabando = true;
-        audioChunks = [];
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); };
-        mediaRecorder.onstop = function() {
-          var blob = new Blob(audioChunks, { type: 'audio/webm' });
-          var url = URL.createObjectURL(blob);
-          var hora = horaActual();
-          if (contactoActual && chatDB[contactoActual]) {
-            chatDB[contactoActual].mensajes.push({ tipo: 'out', clase: 'audio', url: url, hora: hora });
-            chatDB[contactoActual].actividad.push({ tipo: 'audio', descripcion: 'Audio enviado', hora: hora, icono: '🎙️' });
-            renderBurbujas();
-            renderContactos();
-          }
-          // Liberar el micrófono
-          stream.getTracks().forEach(function(t) { t.stop(); });
-        };
-        mediaRecorder.start();
-
-        // Feedback visual
-        var btn = document.getElementById('btn-grabar');
-        if (btn) { btn.style.background = 'var(--danger)'; btn.style.color = 'white'; btn.title = 'Detener grabación'; }
-      }).catch(function() {
-        alert('No se pudo acceder al micrófono. Verifica los permisos del navegador.');
-      });
-    }
-
-    function detenerGrabacion() {
-      grabando = false;
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
-      var btn = document.getElementById('btn-grabar');
-      if (btn) { btn.style.background = 'var(--teal-surface)'; btn.style.color = 'var(--teal-darkest)'; btn.title = 'Grabar audio'; }
-    }
-
-    function abrirImgChat(url) {
-      var modal = document.getElementById('modal-preview');
-      var img = document.getElementById('preview-img');
-      var pdfMsg = document.getElementById('preview-pdf-msg');
-      if (!modal) return;
-      img.src = url;
-      img.style.display = 'block';
-      if(pdfMsg) pdfMsg.style.display = 'none';
-      document.getElementById('preview-nombre').textContent = 'Imagen del chat';
-      var desc = document.getElementById('preview-descargar');
-      if(desc) { desc.href = url; desc.download = 'imagen_chat.jpg'; }
-      modal.style.display = 'flex';
-    }
-
-    function horaActual() {
-      var now = new Date();
-      return now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-    }
+    /*
+      ================================================================
+      ¿QUÉ HACE ESTE JAVASCRIPT?
+      Esta función muestra el mensaje de "éxito" después de que el
+      usuario hace clic en un botón de formulario.
+      Es solo una simulación visual para el sketch.
+      ================================================================
+    */
+
+    // 'function' define un bloque de código reutilizable con un nombre.
+    // 'idNotificacion' es un parámetro: recibe el nombre del elemento a mostrar.
+    function mostrarExito(idNotificacion) {
+
+      // 'document.getElementById()' busca en la página un elemento
+      // que tenga el 'id' que le pasemos.
+      var notificacion = document.getElementById(idNotificacion);
+
+      // Cambiamos el estilo de 'display' de 'none' (oculto) a 'block' (visible).
+      notificacion.style.display = 'block';
+
+      // 'setTimeout' espera un tiempo y luego ejecuta una función.
+      // Aquí espera 3000 milisegundos (3 segundos) y luego oculta la notificación.
+      setTimeout(function() {
+        notificacion.style.display = 'none';
+      }, 3000);
+
+      // 'return false' le dice al formulario que NO recargue la página.
+      return false;
+
+    } // Fin de la función 'mostrarExito'.
+
+
+    // ---------------------------------------------------------------
+    // Al cargar la página, ponemos la fecha de hoy en el campo de fecha.
+    // Esto es una mejora de usabilidad: el campo se llena automáticamente.
+    // ---------------------------------------------------------------
+
+    // 'new Date()' crea un objeto con la fecha y hora actual.
+    var hoy = new Date();
+
+    // 'toISOString()' convierte la fecha a texto en formato "AAAA-MM-DD".
+    // '.split("T")[0]' toma solo la parte de la fecha, sin la hora.
+    var fechaHoy = hoy.toISOString().split("T")[0];
+
+    // Ponemos esa fecha como valor del campo de fecha en el formulario.
+    document.getElementById("fecha-nota").value = fechaHoy;
 
   </script>
+  <!-- FIN DEL JAVASCRIPT -->
+
 </body>
 
 </html>
